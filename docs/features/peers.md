@@ -73,10 +73,10 @@ Use `peerName/botName` syntax for precise routing:
 
 ```bash
 # Auto-routing — searches local first, then peers in order
-mb talk backend-bot chatId "fix the bug"
+cb talk backend-bot chatId "fix the bug"
 
 # Explicit peer — routes directly to alice's backend-bot
-mb talk alice/backend-bot chatId "fix the bug"
+cb talk alice/backend-bot chatId "fix the bug"
 ```
 
 ## API
@@ -90,9 +90,9 @@ mb talk alice/backend-bot chatId "fix the bug"
 ## CLI
 
 ```bash
-mb peers                            # list peers and status
-mb bots                             # list all bots (includes peer bots)
-mb talk alice/bot chatId "prompt"    # talk to a specific peer's bot
+cb peers                            # list peers and status
+cb bots                             # list all bots (includes peer bots)
+cb talk alice/bot chatId "prompt"    # talk to a specific peer's bot
 ```
 
 ## Health Monitoring

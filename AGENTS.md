@@ -135,17 +135,17 @@ A centralized skill registry that allows bots to publish, discover, and install 
 - `POST /api/skills/:name/install` — Install a skill to a bot
 - `DELETE /api/skills/:name` — Remove a skill
 
-**CLI (`mb` shortcut):**
+**CLI (`cb` shortcut):**
 ```bash
-mb skills                                  # List all skills
-mb skills search <query>                   # Search by keyword
-mb skills get <name>                       # Get skill details
-mb skills publish <botName> <skillName>    # Publish a bot's skill
-mb skills install <skillName> <botName>    # Install to a bot
-mb skills remove <name>                    # Unpublish
+cb skills                                  # List all skills
+cb skills search <query>                   # Search by keyword
+cb skills get <name>                       # Get skill details
+cb skills publish <botName> <skillName>    # Publish a bot's skill
+cb skills install <skillName> <botName>    # Install to a bot
+cb skills remove <name>                    # Unpublish
 ```
 
-**Cross-instance**: PeerManager fetches skills alongside bots during 30s polling. Peer skills appear in list/search results with `peerName`/`peerUrl` fields. Install from peer: `mb skills install <skill> <bot> peer:<peerName>`.
+**Cross-instance**: PeerManager fetches skills alongside bots during 30s polling. Peer skills appear in list/search results with `peerName`/`peerUrl` fields. Install from peer: `cb skills install <skill> <bot> peer:<peerName>`.
 
 ### Session Isolation
 

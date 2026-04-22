@@ -25,18 +25,18 @@ mm folders              # Browse folder tree
 
 For full API (create with tags, update, delete), use the `/metamemory` skill.
 
-### /metabot — Agent Bus, Scheduling & Bot Management
-Use the `mb` shell shortcut for quick operations:
+### /codexbot — Agent Bus, Scheduling & Bot Management
+Use the `cb` shell shortcut for quick operations:
 
 ```bash
-mb bots                                    # List all bots
-mb task <botName> <chatId> <prompt>        # Delegate task
-mb schedule list                           # List scheduled tasks
-mb schedule add <bot> <chatId> <sec> <prompt>  # Schedule a task
-mb health                                  # Health check
+cb bots                                    # List all bots
+cb task <botName> <chatId> <prompt>        # Delegate task
+cb schedule list                           # List scheduled tasks
+cb schedule add <bot> <chatId> <sec> <prompt>  # Schedule a task
+cb health                                  # Health check
 ```
 
-For full API (create bots, update tasks, sendCards), use the `/metabot` skill.
+For full API (create bots, update tasks, sendCards), use the `/codexbot` skill.
 
 ### Feishu / Lark CLI (Feishu bots only)
 

@@ -44,8 +44,8 @@ metabot/
 │   └── utils/
 │       └── logger.ts               # 日志
 ├── bin/
-│   ├── metabot                     # 服务管理 CLI
-│   ├── mb                          # Agent 总线 CLI
+│   ├── codexbot                   # 服务管理 CLI
+│   ├── cb                          # Agent 总线 CLI
 │   ├── mm                          # MetaMemory CLI
 │   └── doubao-tts                  # 豆包 TTS CLI
 ├── web/                            # Web UI 源码（React + Vite）

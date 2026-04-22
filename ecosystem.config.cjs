@@ -3,12 +3,12 @@ const path = require('path');
 module.exports = {
   apps: [
     {
-      name: 'metabot',
+      name: 'codexbot',
       script: 'src/index.ts',
       interpreter: path.join(__dirname, 'node_modules/.bin/tsx'),
       cwd: __dirname,
 
-      // Watch disabled — use `metabot restart` to apply code changes manually
+      // Watch disabled — use `codexbot restart` to apply code changes manually
       watch: false,
 
       // Auto-restart on crash

@@ -93,11 +93,11 @@ Full-featured browser-based chat interface. Access at `https://your-server/web/`
 | **MetaSkill** | Agent factory. `/metaskill` generates a complete `.codex/` agent team (orchestrator + specialists + reviewer) |
 | **MetaMemory** | Embedded SQLite knowledge store with full-text search, Web UI, auto-syncs to Feishu Wiki |
 | **IM Bridge** | Chat with any agent from Feishu, Telegram, or WeChat (including mobile). Streaming cards + tool call tracking |
-| **Agent Bus** | Agents talk to each other via `mb talk`. Create/remove bots at runtime |
+| **Agent Bus** | Agents talk to each other via `cb talk`. Create/remove bots at runtime |
 | **Task Scheduler** | Cron recurring tasks + one-time delays, persisted across restarts, auto-retries when busy |
 | **Feishu Lark CLI** | 200+ commands covering docs, messaging, calendar, tasks, and 8 more domains. 19 AI Agent Skills |
-| **Skill Hub** | Cross-instance skill sharing registry. `mb skills` to publish, discover, and install skills with FTS5 search |
-| **Peers** | Cross-instance bot discovery and task routing. `mb talk alice/backend-bot` routes automatically |
+| **Skill Hub** | Cross-instance skill sharing registry. `cb skills` to publish, discover, and install skills with FTS5 search |
+| **Peers** | Cross-instance bot discovery and task routing. `cb talk alice/backend-bot` routes automatically |
 | **Voice Assistant** | Jarvis mode -- "Hey Siri, Jarvis" from AirPods for hands-free agent control |
 
 ## Quick Start
@@ -350,13 +350,13 @@ MetaBot runs Codex in `bypassPermissions` mode — no interactive approval:
 <details>
 <summary><strong>CLI Tools</strong></summary>
 
-The installer places `metabot`, `mm`, `mb` in `~/.local/bin/` — available immediately.
+The installer places `codexbot`, `mm`, `cb` in `~/.local/bin/` — available immediately.
 
 ```bash
 # MetaBot management
-metabot update                      # pull latest, rebuild, restart
-metabot start / stop / restart      # PM2 management
-metabot logs                        # view live logs
+codexbot update                      # pull latest, rebuild, restart
+codexbot start / stop / restart      # PM2 management
+codexbot logs                        # view live logs
 
 # MetaMemory
 mm search "deployment guide"        # full-text search
@@ -364,11 +364,11 @@ mm list                             # list documents
 mm folders                          # folder tree
 
 # Agent Bus
-mb bots                             # list all bots
-mb talk <bot> <chatId> <prompt>     # talk to a bot
-mb schedule list                    # list scheduled tasks
-mb schedule cron <bot> <chatId> '<cron>' <prompt>  # recurring task
-mb stats                            # cost & usage stats
+cb bots                             # list all bots
+cb talk <bot> <chatId> <prompt>     # talk to a bot
+cb schedule list                    # list scheduled tasks
+cb schedule cron <bot> <chatId> '<cron>' <prompt>  # recurring task
+cb stats                            # cost & usage stats
 
 # Feishu Lark CLI (Feishu bots only)
 lark-cli docs +fetch --doc <feishu-url>
@@ -376,13 +376,13 @@ lark-cli im +messages-send --chat-id oc_xxx --text "Hi"
 lark-cli calendar +agenda --as user
 
 # Skill Hub
-mb skills                             # list all skills
-mb skills search <query>              # search skills
-mb skills publish <bot> <skill>       # publish a bot's skill
-mb skills install <skill> <bot>       # install skill to a bot
+cb skills                             # list all skills
+cb skills search <query>              # search skills
+cb skills publish <bot> <skill>       # publish a bot's skill
+cb skills install <skill> <bot>       # install skill to a bot
 
 # Text-to-Speech
-mb voice "Hello world" --play
+cb voice "Hello world" --play
 ```
 
 CLI supports connecting to remote MetaBot/MetaMemory servers — configure `METABOT_URL` and `META_MEMORY_URL` in `~/.metabot/.env`.

@@ -542,11 +542,12 @@ if [[ -d "$HOME/.codex/skills/memory" ]]; then
 fi
 success "metamemory skill installed → $SKILLS_DIR/metamemory"
 
-# Install metabot skill (bundled in src/skills/metabot/)
-info "Installing metabot skill..."
-mkdir -p "$SKILLS_DIR/metabot"
-cp "$METABOT_HOME/src/skills/metabot/SKILL.md" "$SKILLS_DIR/metabot/SKILL.md"
-success "metabot skill installed → $SKILLS_DIR/metabot"
+# Install codexbot skill (bundled in src/skills/codexbot/)
+info "Installing codexbot skill..."
+rm -rf "$SKILLS_DIR/metabot"
+mkdir -p "$SKILLS_DIR/codexbot"
+cp "$METABOT_HOME/src/skills/codexbot/SKILL.md" "$SKILLS_DIR/codexbot/SKILL.md"
+success "codexbot skill installed → $SKILLS_DIR/codexbot"
 
 # Install voice skill (bundled in src/skills/voice/)
 info "Installing voice skill..."
@@ -650,7 +651,7 @@ if [[ -n "${DEPLOY_WORK_DIR:-}" ]]; then
   SKILLS_DEST="$DEPLOY_WORK_DIR/.codex/skills"
 
   # Copy skills (common + lark-cli skills if Feishu)
-  DEPLOY_SKILLS="metaskill metamemory metabot voice skill-hub"
+  DEPLOY_SKILLS="metaskill metamemory codexbot voice skill-hub"
   if [[ "$SETUP_LARK_CLI" == "true" ]]; then
     for lark_skill in lark-base lark-calendar lark-contact lark-doc lark-drive lark-event lark-im lark-mail lark-minutes lark-openapi-explorer lark-shared lark-sheets lark-skill-maker lark-task lark-vc lark-whiteboard lark-wiki lark-workflow-meeting-summary lark-workflow-standup-report; do
       [[ -d "$SKILLS_DIR/$lark_skill" ]] && DEPLOY_SKILLS="$DEPLOY_SKILLS $lark_skill"
@@ -767,16 +768,16 @@ else
   info "mm() shortcut already exists, skipping"
 fi
 
-# Install mb() shell shortcut for MetaBot API (Agent Bus, Scheduling, Bot Management)
-if ! grep -q 'mb()' "$BASH_ALIASES" 2>/dev/null; then
-  info "Installing mb() shell shortcut..."
+# Install cb() shell shortcut for MetaBot API (Agent Bus, Scheduling, Bot Management)
+if ! grep -q 'cb()' "$BASH_ALIASES" 2>/dev/null; then
+  info "Installing cb() shell shortcut..."
   cat >> "$BASH_ALIASES" << 'MBEOF'
 
 # MetaBot API shortcuts (installed by MetaBot)
 export METABOT_URL="http://localhost:${METABOT_API_PORT:-9100}"
 export METABOT_AUTH="Authorization: Bearer ${METABOT_API_SECRET:-changeme}"
 
-mb() {
+cb() {
   local cmd="${1:-help}"
   shift 2>/dev/null
   case "$cmd" in
@@ -792,7 +793,7 @@ mb() {
       local bot="$1" chat="$2"; shift 2 2>/dev/null
       local prompt="$*"
       if [[ -z "$bot" || -z "$chat" || -z "$prompt" ]]; then
-        echo "Usage: mb task <botName> <chatId> <prompt>"
+        echo "Usage: cb task <botName> <chatId> <prompt>"
         return 1
       fi
       curl -s -X POST "$METABOT_URL/api/tasks" \
@@ -810,7 +811,7 @@ mb() {
           local bot="$1" chat="$2" delay="$3"; shift 3 2>/dev/null
           local prompt="$*"
           if [[ -z "$bot" || -z "$chat" || -z "$delay" || -z "$prompt" ]]; then
-            echo "Usage: mb schedule add <botName> <chatId> <delaySeconds> <prompt>"
+            echo "Usage: cb schedule add <botName> <chatId> <delaySeconds> <prompt>"
             return 1
           fi
           curl -s -X POST "$METABOT_URL/api/schedule" \
@@ -818,14 +819,14 @@ mb() {
             -d "{\"botName\":\"$bot\",\"chatId\":\"$chat\",\"delaySeconds\":$delay,\"prompt\":\"$prompt\"}"
           ;;
         cancel|rm)
-          if [[ -z "$1" ]]; then echo "Usage: mb schedule cancel <id>"; return 1; fi
+          if [[ -z "$1" ]]; then echo "Usage: cb schedule cancel <id>"; return 1; fi
           curl -s -X DELETE "$METABOT_URL/api/schedule/$1" -H "$METABOT_AUTH"
           ;;
         *)
-          echo "mb schedule - Task scheduling"
-          echo "  mb schedule list                                    - List pending tasks"
-          echo "  mb schedule add <bot> <chatId> <delaySec> <prompt>  - Schedule a task"
-          echo "  mb schedule cancel <id>                             - Cancel a task"
+          echo "cb schedule - Task scheduling"
+          echo "  cb schedule list                                    - List pending tasks"
+          echo "  cb schedule add <bot> <chatId> <delaySec> <prompt>  - Schedule a task"
+          echo "  cb schedule cancel <id>                             - Cancel a task"
           ;;
       esac
       ;;
@@ -835,22 +836,22 @@ mb() {
       ;;
     # --- Help ---
     *)
-      echo "mb - MetaBot API CLI"
+      echo "cb - MetaBot API CLI"
       echo ""
       echo "  Bots:"
-      echo "    mb bots                          - List all bots"
-      echo "    mb bot <name>                    - Get bot details"
+      echo "    cb bots                          - List all bots"
+      echo "    cb bot <name>                    - Get bot details"
       echo ""
       echo "  Tasks:"
-      echo "    mb task <bot> <chatId> <prompt>  - Delegate task to a bot"
+      echo "    cb task <bot> <chatId> <prompt>  - Delegate task to a bot"
       echo ""
       echo "  Scheduling:"
-      echo "    mb schedule list                 - List pending scheduled tasks"
-      echo "    mb schedule add <bot> <chatId> <delaySec> <prompt>"
-      echo "    mb schedule cancel <id>          - Cancel a scheduled task"
+      echo "    cb schedule list                 - List pending scheduled tasks"
+      echo "    cb schedule add <bot> <chatId> <delaySec> <prompt>"
+      echo "    cb schedule cancel <id>          - Cancel a scheduled task"
       echo ""
       echo "  System:"
-      echo "    mb health                        - Health check"
+      echo "    cb health                        - Health check"
       ;;
   esac
 }
@@ -862,22 +863,23 @@ MBEOF
   if [[ -n "${API_SECRET:-}" ]]; then
     sed_i "s|\${METABOT_API_SECRET:-changeme}|${API_SECRET}|g" "$BASH_ALIASES"
   fi
-  success "mb() shortcut installed"
+  success "cb() shortcut installed"
 else
-  info "mb() shortcut already exists, skipping"
+  info "cb() shortcut already exists, skipping"
 fi
 
 # Ensure ~/.bashrc sources ~/.bash_aliases (Ubuntu default, but not universal)
 if [[ -f "$HOME/.bashrc" ]] && ! grep -q 'bash_aliases' "$HOME/.bashrc"; then
   echo -e '\n# Load bash aliases\nif [ -f ~/.bash_aliases ]; then\n    . ~/.bash_aliases\nfi' >> "$HOME/.bashrc"
 fi
-# Source it in the current shell so mm/mb work immediately after install
+# Source it in the current shell so mm/cb work immediately after install
 source "$BASH_ALIASES" 2>/dev/null || true
 
-# Install mm/mb/metabot as standalone executables in ~/.local/bin (no source needed)
+# Install mm/cb/codexbot as standalone executables in ~/.local/bin (no source needed)
 LOCAL_BIN="$HOME/.local/bin"
 mkdir -p "$LOCAL_BIN"
-CLI_TOOLS="mm mb metabot"
+rm -f "$LOCAL_BIN/mb" "$LOCAL_BIN/metabot"
+CLI_TOOLS="mm cb codexbot"
 for cli in $CLI_TOOLS; do
   if [[ -f "$METABOT_HOME/bin/$cli" ]]; then
     cp "$METABOT_HOME/bin/$cli" "$LOCAL_BIN/$cli"
@@ -891,7 +893,7 @@ if ! echo "$PATH" | grep -q "$LOCAL_BIN"; then
   echo "export PATH=\"$LOCAL_BIN:\$PATH\"" >> "$HOME/.bashrc"
   info "Added ~/.local/bin to PATH in ~/.bashrc"
 fi
-success "mm/mb/metabot CLI tools installed to $LOCAL_BIN"
+success "mm/cb/codexbot CLI tools installed to $LOCAL_BIN"
 
 # ============================================================================
 # Phase 8: Build + Start MetaBot with PM2
@@ -904,8 +906,12 @@ info "Building TypeScript..."
 npm run build 2>/dev/null && success "Build complete" || warn "Build failed, will use tsx directly via PM2"
 
 # Always delete + start fresh to avoid stale/stopped process issues
+if pm2 describe codexbot &>/dev/null 2>&1; then
+  info "Removing old CodexBot PM2 process..."
+  pm2 delete codexbot 2>/dev/null || true
+fi
 if pm2 describe metabot &>/dev/null 2>&1; then
-  info "Removing old MetaBot PM2 process..."
+  info "Removing legacy MetaBot PM2 process..."
   pm2 delete metabot 2>/dev/null || true
 fi
 info "Starting MetaBot with PM2..."
@@ -952,7 +958,7 @@ if [[ "$HAS_WECHAT_BOT" == "true" ]]; then
     echo ""
   else
     warn "QR URL not yet available. Check logs to get it:"
-    echo "    pm2 logs metabot --lines 30"
+    echo "    pm2 logs codexbot --lines 30"
   fi
 fi
 
@@ -981,9 +987,9 @@ if [[ "$METAMEMORY_INSTALLED" == "true" ]]; then
 fi
 echo ""
 echo -e "  ${BOLD}Commands:${NC}"
-echo "    pm2 logs metabot          # View MetaBot logs"
-echo "    pm2 restart metabot       # Restart MetaBot"
-echo "    pm2 stop metabot          # Stop MetaBot"
+echo "    pm2 logs codexbot         # View MetaBot logs"
+echo "    pm2 restart codexbot      # Restart MetaBot"
+echo "    pm2 stop codexbot         # Stop MetaBot"
 if [[ "$METAMEMORY_INSTALLED" == "true" ]]; then
   echo "    mm search <query>         # Search MetaMemory"
   echo "    mm folders                # Browse knowledge tree"
@@ -1007,11 +1013,11 @@ if [[ "${SKIP_CONFIG}" == "false" ]]; then
     STEP_NUM=$((STEP_NUM + 1))
   fi
   if [[ "${SETUP_WECHAT:-false}" == "true" ]]; then
-    echo "    ${STEP_NUM}. Scan the WeChat QR code shown above (or check pm2 logs metabot)"
+    echo "    ${STEP_NUM}. Scan the WeChat QR code shown above (or check pm2 logs codexbot)"
     STEP_NUM=$((STEP_NUM + 1))
     echo "    ${STEP_NUM}. Send a message to your ClawBot in WeChat"
     STEP_NUM=$((STEP_NUM + 1))
   fi
-  echo "    ${STEP_NUM}. Check logs: pm2 logs metabot"
+  echo "    ${STEP_NUM}. Check logs: pm2 logs codexbot"
 fi
 echo ""

@@ -97,11 +97,11 @@ MetaBot 支持 4 种方式与你的 Agent 团队交互：
 | **MetaSkill** | Agent 工厂。`/metaskill` 一键生成 `.codex/` Agent 团队（orchestrator + 专家 + reviewer） |
 | **MetaMemory** | 内嵌 SQLite 知识库，全文搜索，Web UI，变更自动同步到飞书知识库 |
 | **IM Bridge** | 飞书、Telegram、微信（含手机端）对话任意 Agent，流式卡片 + 工具调用追踪 |
-| **Agent 总线** | Agent 通过 `mb talk` 互相对话，运行时创建/删除 Bot |
+| **Agent 总线** | Agent 通过 `cb talk` 互相对话，运行时创建/删除 Bot |
 | **定时调度器** | Cron 周期任务 + 一次性延迟任务，跨重启持久化，忙时自动重试 |
 | **飞书 Lark CLI** | 200+ 命令覆盖文档、消息、日历、任务等 11 大业务域，19 个 AI Agent Skills |
-| **Skill Hub** | 跨实例技能共享注册中心。`mb skills` 发布、发现、安装技能，FTS5 全文搜索 |
-| **Peers 联邦** | 跨实例 Bot 发现和任务路由，`mb talk alice/backend-bot` 自动路由 |
+| **Skill Hub** | 跨实例技能共享注册中心。`cb skills` 发布、发现、安装技能，FTS5 全文搜索 |
+| **Peers 联邦** | 跨实例 Bot 发现和任务路由，`cb talk alice/backend-bot` 自动路由 |
 | **语音助手** | Jarvis 模式 — AirPods 说 "Hey Siri, Jarvis" 语音控制 Agent |
 
 ## 快速开始
@@ -349,13 +349,13 @@ MetaBot 以 `bypassPermissions` 模式运行 Codex — 无交互式确认：
 <details>
 <summary><strong>CLI 工具</strong></summary>
 
-安装器将 `metabot`、`mm`、`mb` 放到 `~/.local/bin/`，安装后立即可用。
+安装器将 `codexbot`、`mm`、`cb` 放到 `~/.local/bin/`，安装后立即可用。
 
 ```bash
 # MetaBot 管理
-metabot update                      # 拉取最新代码，重新构建，重启
-metabot start / stop / restart      # PM2 管理
-metabot logs                        # 查看实时日志
+codexbot update                      # 拉取最新代码，重新构建，重启
+codexbot start / stop / restart      # PM2 管理
+codexbot logs                        # 查看实时日志
 
 # MetaMemory
 mm search "部署指南"                 # 全文搜索
@@ -363,11 +363,11 @@ mm list                             # 列出文档
 mm folders                          # 文件夹树
 
 # Agent 总线
-mb bots                             # 列出所有 Bot
-mb talk <bot> <chatId> <prompt>     # 与 Bot 对话
-mb schedule list                    # 列出定时任务
-mb schedule cron <bot> <chatId> '<cron>' <prompt>  # 创建周期性任务
-mb stats                            # 费用和使用统计
+cb bots                             # 列出所有 Bot
+cb talk <bot> <chatId> <prompt>     # 与 Bot 对话
+cb schedule list                    # 列出定时任务
+cb schedule cron <bot> <chatId> '<cron>' <prompt>  # 创建周期性任务
+cb stats                            # 费用和使用统计
 
 # 飞书 Lark CLI（飞书 Bot 专属）
 lark-cli docs +fetch --doc <飞书链接>
@@ -375,13 +375,13 @@ lark-cli im +messages-send --chat-id oc_xxx --text "Hi"
 lark-cli calendar +agenda --as user
 
 # Skill Hub
-mb skills                             # 列出所有技能
-mb skills search <关键词>              # 搜索技能
-mb skills publish <bot> <skill>       # 发布 Bot 的技能
-mb skills install <skill> <bot>       # 安装技能到 Bot
+cb skills                             # 列出所有技能
+cb skills search <关键词>              # 搜索技能
+cb skills publish <bot> <skill>       # 发布 Bot 的技能
+cb skills install <skill> <bot>       # 安装技能到 Bot
 
 # 文字转语音
-mb voice "你好世界" --play
+cb voice "你好世界" --play
 ```
 
 CLI 支持连接远程 MetaBot/MetaMemory 服务器，在 `~/.metabot/.env` 配置 `METABOT_URL` 和 `META_MEMORY_URL` 即可。

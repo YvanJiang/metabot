@@ -266,14 +266,14 @@ curl -X POST http://localhost:9100/api/tts \
 **CLI 快捷命令：**
 
 ```bash
-mb voice "你好世界"                   # 生成 MP3，输出文件路径
-mb voice "你好" --play               # 生成并播放音频
-mb voice "你好" -o greeting.mp3      # 保存到指定文件
-echo "长文本" | mb voice             # 从标准输入读取
-mb voice "你好" --provider openai --voice nova  # 指定服务商/声音
+cb voice "你好世界"                   # 生成 MP3，输出文件路径
+cb voice "你好" --play               # 生成并播放音频
+cb voice "你好" -o greeting.mp3      # 保存到指定文件
+echo "长文本" | cb voice             # 从标准输入读取
+cb voice "你好" --provider openai --voice nova  # 指定服务商/声音
 ```
 
-详见 [mb CLI — 语音](../reference/cli-mb.md#语音) 完整 CLI 参考。
+详见 [cb CLI — 语音](../reference/cli-cb.md#语音) 完整 CLI 参考。
 
 ## 限制
 

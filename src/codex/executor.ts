@@ -50,7 +50,7 @@ function buildPrompt(prompt: string, outputsDir?: string, apiContext?: ApiContex
   if (apiContext) {
     prefix.push(
       `You are running as bot "${apiContext.botName}" in chat "${apiContext.chatId}".`,
-      'Use the /metabot skill for API details when needed.'
+      'Use the /codexbot skill for API details when needed.'
     );
 
     if (apiContext.groupMembers && apiContext.groupMembers.length > 0) {
@@ -59,7 +59,7 @@ function buildPrompt(prompt: string, outputsDir?: string, apiContext?: ApiContex
         if (apiContext.groupId) {
           prefix.push(
             `This is group ${apiContext.groupId}. Other bots in the group: ${others.join(', ')}.`,
-            `To talk to another bot, use: mb talk <botName> grouptalk-${apiContext.groupId}-<botName> "message".`
+            `To talk to another bot, use: cb talk <botName> grouptalk-${apiContext.groupId}-<botName> "message".`
           );
         } else {
           prefix.push(`Other bots in this group: ${others.join(', ')}.`);

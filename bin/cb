@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# mb - MetaBot API CLI (installed by MetaBot)
+# cb - MetaBot API CLI (installed by MetaBot)
 # Standalone executable — works without sourcing any file.
 
 set -euo pipefail
@@ -33,10 +33,10 @@ case "$cmd" in
     bot="$1" chat="$2"; shift 2 2>/dev/null || true
     prompt="$*"
     if [[ -z "${bot:-}" || -z "${chat:-}" || -z "${prompt:-}" ]]; then
-      echo "Usage: mb talk [peer/]<botName> <chatId> <prompt>"
+      echo "Usage: cb talk [peer/]<botName> <chatId> <prompt>"
       echo "  Examples:"
-      echo "    mb talk mybot chat123 'fix the bug'"
-      echo "    mb talk alice/backend-bot chat123 'deploy to staging'"
+      echo "    cb talk mybot chat123 'fix the bug'"
+      echo "    cb talk alice/backend-bot chat123 'deploy to staging'"
       exit 1
     fi
     python3 -c "
@@ -52,8 +52,8 @@ print(json.dumps({'botName': sys.argv[1], 'chatId': sys.argv[2], 'prompt': sys.a
     bot="$1" chat="$2"; shift 2 2>/dev/null || true
     prompt="$*"
     if [[ -z "${bot:-}" || -z "${chat:-}" || -z "${prompt:-}" ]]; then
-      echo "Usage: mb task <botName> <chatId> <prompt>"
-      echo "(Deprecated: use 'mb talk' instead)"
+      echo "Usage: cb task <botName> <chatId> <prompt>"
+      echo "(Deprecated: use 'cb talk' instead)"
       exit 1
     fi
     python3 -c "
@@ -75,7 +75,7 @@ print(json.dumps({'botName': sys.argv[1], 'chatId': sys.argv[2], 'prompt': sys.a
         bot="$1" chat="$2" delay="$3"; shift 3 2>/dev/null || true
         prompt="$*"
         if [[ -z "${bot:-}" || -z "${chat:-}" || -z "${delay:-}" || -z "${prompt:-}" ]]; then
-          echo "Usage: mb schedule add <botName> <chatId> <delaySeconds> <prompt>"
+          echo "Usage: cb schedule add <botName> <chatId> <delaySeconds> <prompt>"
           exit 1
         fi
         python3 -c "
@@ -90,8 +90,8 @@ print(json.dumps({'botName': sys.argv[1], 'chatId': sys.argv[2], 'delaySeconds':
         bot="$1" chat="$2" cron_expr="$3"; shift 3 2>/dev/null || true
         prompt="$*"
         if [[ -z "${bot:-}" || -z "${chat:-}" || -z "${cron_expr:-}" || -z "${prompt:-}" ]]; then
-          echo "Usage: mb schedule cron <botName> <chatId> '<cronExpr>' <prompt>"
-          echo "  Example: mb schedule cron mybot oc_xxx '0 8 * * 1-5' Generate daily report"
+          echo "Usage: cb schedule cron <botName> <chatId> '<cronExpr>' <prompt>"
+          echo "  Example: cb schedule cron mybot oc_xxx '0 8 * * 1-5' Generate daily report"
           exit 1
         fi
         python3 -c "
@@ -103,25 +103,25 @@ print(json.dumps({'botName': sys.argv[1], 'chatId': sys.argv[2], 'cronExpr': sys
           -d @- | _json
         ;;
       pause|p)
-        if [[ -z "${1:-}" ]]; then echo "Usage: mb schedule pause <id>"; exit 1; fi
+        if [[ -z "${1:-}" ]]; then echo "Usage: cb schedule pause <id>"; exit 1; fi
         curl -s -X POST "$METABOT_URL/api/schedule/$1/pause" -H "$METABOT_AUTH" | _json
         ;;
       resume|r)
-        if [[ -z "${1:-}" ]]; then echo "Usage: mb schedule resume <id>"; exit 1; fi
+        if [[ -z "${1:-}" ]]; then echo "Usage: cb schedule resume <id>"; exit 1; fi
         curl -s -X POST "$METABOT_URL/api/schedule/$1/resume" -H "$METABOT_AUTH" | _json
         ;;
       cancel|rm)
-        if [[ -z "${1:-}" ]]; then echo "Usage: mb schedule cancel <id>"; exit 1; fi
+        if [[ -z "${1:-}" ]]; then echo "Usage: cb schedule cancel <id>"; exit 1; fi
         curl -s -X DELETE "$METABOT_URL/api/schedule/$1" -H "$METABOT_AUTH" | _json
         ;;
       *)
-        echo "mb schedule - Task scheduling"
-        echo "  mb schedule list                                    - List all scheduled tasks"
-        echo "  mb schedule add <bot> <chatId> <delaySec> <prompt>  - Schedule a one-time task"
-        echo "  mb schedule cron <bot> <chatId> '<cron>' <prompt>   - Schedule a recurring task"
-        echo "  mb schedule pause <id>                              - Pause a recurring task"
-        echo "  mb schedule resume <id>                             - Resume a paused task"
-        echo "  mb schedule cancel <id>                             - Cancel a task"
+        echo "cb schedule - Task scheduling"
+        echo "  cb schedule list                                    - List all scheduled tasks"
+        echo "  cb schedule add <bot> <chatId> <delaySec> <prompt>  - Schedule a one-time task"
+        echo "  cb schedule cron <bot> <chatId> '<cron>' <prompt>   - Schedule a recurring task"
+        echo "  cb schedule pause <id>                              - Pause a recurring task"
+        echo "  cb schedule resume <id>                             - Resume a paused task"
+        echo "  cb schedule cancel <id>                             - Cancel a task"
         ;;
     esac
     ;;
@@ -151,7 +151,7 @@ print(json.dumps({'botName': sys.argv[1], 'chatId': sys.argv[2], 'cronExpr': sys
           esac
         done
         if [[ -z "${bot:-}" || -z "${chat:-}" ]]; then
-          echo "Usage: mb voice call <botName> <chatId> [prompt] [-w welcomeMessage]"
+          echo "Usage: cb voice call <botName> <chatId> [prompt] [-w welcomeMessage]"
           echo "  Initiates an RTC voice call. Notifies the web/iOS user,"
           echo "  waits for the call to end, and returns the transcript."
           echo ""
@@ -159,8 +159,8 @@ print(json.dumps({'botName': sys.argv[1], 'chatId': sys.argv[2], 'cronExpr': sys
           echo "    -w, --welcome <text>  AI's opening line (what it says first)"
           echo ""
           echo "  Examples:"
-          echo "    mb voice call whis chat123 'Tell user they are awesome' -w 'Flood, 你是最棒的！'"
-          echo "    mb voice call whis chat123 -w 'Hi! I wanted to discuss the project progress.'"
+          echo "    cb voice call whis chat123 'Tell user they are awesome' -w 'Flood, 你是最棒的！'"
+          echo "    cb voice call whis chat123 -w 'Hi! I wanted to discuss the project progress.'"
           exit 1
         fi
         echo "Starting voice call... (waiting for user to join and call to end)"
@@ -177,7 +177,7 @@ print(json.dumps(p))
           -d @- | _json
         ;;
       transcript|t)
-        if [[ -z "${1:-}" ]]; then echo "Usage: mb voice transcript <sessionId>"; exit 1; fi
+        if [[ -z "${1:-}" ]]; then echo "Usage: cb voice transcript <sessionId>"; exit 1; fi
         curl -s -H "$METABOT_AUTH" "$METABOT_URL/api/rtc/transcript?sessionId=$1" | _json
         ;;
       list|ls)
@@ -205,8 +205,8 @@ print(json.dumps(p))
         done
         if [[ -z "$_text" ]]; then
           if [[ -t 0 ]]; then
-            echo "Usage: mb voice tts \"text\" [--play] [-o file.mp3] [--provider doubao|openai|elevenlabs] [--voice <name>]"
-            echo "  Or pipe text: echo 'hello' | mb voice tts"
+            echo "Usage: cb voice tts \"text\" [--play] [-o file.mp3] [--provider doubao|openai|elevenlabs] [--voice <name>]"
+            echo "  Or pipe text: echo 'hello' | cb voice tts"
             exit 1
           fi
           _text="$(cat)"
@@ -219,7 +219,7 @@ if sys.argv[3]: body['voice'] = sys.argv[3]
 print(json.dumps(body))
 " "$_text" "$_provider" "$_voice")
         if [[ -z "$_output" ]]; then
-          _output="/tmp/mb-voice-$(date +%s).mp3"
+          _output="/tmp/cb-voice-$(date +%s).mp3"
         fi
         _http_code=$(curl -s -w '%{http_code}' -o "$_output" \
           -X POST "$METABOT_URL/api/tts" \
@@ -242,18 +242,18 @@ print(json.dumps(body))
         fi
         ;;
       *)
-        echo "mb voice - Voice tools"
+        echo "cb voice - Voice tools"
         echo ""
         echo "  RTC Voice Call:"
-        echo "    mb voice call <bot> <chatId> [prompt] [-w opening]  - Start voice call"
-        echo "    mb voice transcript <sessionId>         - Get call transcript"
-        echo "    mb voice list                           - List active voice sessions"
-        echo "    mb voice config                         - Check RTC configuration"
+        echo "    cb voice call <bot> <chatId> [prompt] [-w opening]  - Start voice call"
+        echo "    cb voice transcript <sessionId>         - Get call transcript"
+        echo "    cb voice list                           - List active voice sessions"
+        echo "    cb voice config                         - Check RTC configuration"
         echo ""
         echo "  Text-to-Speech:"
-        echo "    mb voice tts \"text\" [--play] [-o f]    - Generate MP3 from text"
-        echo "    mb voice tts \"text\" --provider doubao   - Use specific TTS provider"
-        echo "    echo 'hello' | mb voice tts              - Read from stdin"
+        echo "    cb voice tts \"text\" [--play] [-o f]    - Generate MP3 from text"
+        echo "    cb voice tts \"text\" --provider doubao   - Use specific TTS provider"
+        echo "    echo 'hello' | cb voice tts              - Read from stdin"
         ;;
     esac
     ;;
@@ -266,17 +266,17 @@ print(json.dumps(body))
         ;;
       search|s)
         query="$*"
-        if [[ -z "${query:-}" ]]; then echo "Usage: mb skills search <query>"; exit 1; fi
+        if [[ -z "${query:-}" ]]; then echo "Usage: cb skills search <query>"; exit 1; fi
         curl -s -H "$METABOT_AUTH" "$METABOT_URL/api/skills/search?q=$(python3 -c 'import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))' "$query")" | _json
         ;;
       get|g)
-        if [[ -z "${1:-}" ]]; then echo "Usage: mb skills get <name>"; exit 1; fi
+        if [[ -z "${1:-}" ]]; then echo "Usage: cb skills get <name>"; exit 1; fi
         curl -s -H "$METABOT_AUTH" "$METABOT_URL/api/skills/$1" | _json
         ;;
       publish|pub)
         bot="${1:-}" skill="${2:-}"
         if [[ -z "$bot" || -z "$skill" ]]; then
-          echo "Usage: mb skills publish <botName> <skillName>"
+          echo "Usage: cb skills publish <botName> <skillName>"
           exit 1
         fi
         curl -s -X POST "$METABOT_URL/api/skills/$skill/publish-from-bot" \
@@ -286,7 +286,7 @@ print(json.dumps(body))
       install|i)
         skill="${1:-}" bot="${2:-}"
         if [[ -z "$skill" || -z "$bot" ]]; then
-          echo "Usage: mb skills install <skillName> <botName>"
+          echo "Usage: cb skills install <skillName> <botName>"
           exit 1
         fi
         source="${3:-local}"
@@ -299,17 +299,17 @@ print(json.dumps({'botName': sys.argv[1], 'source': sys.argv[2]}))
           -d @- | _json
         ;;
       remove|rm)
-        if [[ -z "${1:-}" ]]; then echo "Usage: mb skills remove <name>"; exit 1; fi
+        if [[ -z "${1:-}" ]]; then echo "Usage: cb skills remove <name>"; exit 1; fi
         curl -s -X DELETE "$METABOT_URL/api/skills/$1" -H "$METABOT_AUTH" | _json
         ;;
       *)
-        echo "mb skills - Skill Hub (shared skill registry)"
-        echo "  mb skills list                               - List all skills (local + peer)"
-        echo "  mb skills search <query>                     - Search skills by keyword"
-        echo "  mb skills get <name>                         - Get skill details"
-        echo "  mb skills publish <botName> <skillName>      - Publish a bot's skill to the hub"
-        echo "  mb skills install <skillName> <botName>      - Install a skill to a bot"
-        echo "  mb skills remove <name>                      - Unpublish a skill"
+        echo "cb skills - Skill Hub (shared skill registry)"
+        echo "  cb skills list                               - List all skills (local + peer)"
+        echo "  cb skills search <query>                     - Search skills by keyword"
+        echo "  cb skills get <name>                         - Get skill details"
+        echo "  cb skills publish <botName> <skillName>      - Publish a bot's skill to the hub"
+        echo "  cb skills install <skillName> <botName>      - Install a skill to a bot"
+        echo "  cb skills remove <name>                      - Unpublish a skill"
         ;;
     esac
     ;;
@@ -337,7 +337,8 @@ print(json.dumps({'botName': sys.argv[1], 'source': sys.argv[2]}))
 
     echo "==> Updating CLI tools..."
     mkdir -p "$LOCAL_BIN"
-    for cli in mb mm metabot; do
+    rm -f "$LOCAL_BIN/mb" "$LOCAL_BIN/metabot"
+    for cli in cb mm codexbot; do
       src="$METABOT_SRC/bin/$cli"
       dst="$LOCAL_BIN/$cli"
       if [[ -f "$src" ]]; then
@@ -352,11 +353,12 @@ print(json.dumps({'botName': sys.argv[1], 'source': sys.argv[2]}))
     echo "==> Updating skills..."
     SKILLS_DIR="$HOME/.claude/skills"
     mkdir -p "$SKILLS_DIR"
-    for skill in metaskill metamemory metabot voice phone-call skill-hub; do
+    rm -rf "$SKILLS_DIR/metabot"
+    for skill in metaskill metamemory codexbot voice phone-call skill-hub; do
       case "$skill" in
         metaskill)   src="$METABOT_SRC/src/skills/metaskill" ;;
         metamemory)  src="$METABOT_SRC/src/memory/skill" ;;
-        metabot)     src="$METABOT_SRC/src/skills/metabot" ;;
+        codexbot)    src="$METABOT_SRC/src/skills/codexbot" ;;
         voice)       src="$METABOT_SRC/src/skills/voice" ;;
         phone-call)  src="$METABOT_SRC/src/skills/phone-call" ;;
         skill-hub)   src="$METABOT_SRC/src/skills/skill-hub" ;;
@@ -390,7 +392,8 @@ print(json.dumps({'botName': sys.argv[1], 'source': sys.argv[2]}))
       if [[ -n "${work_dir:-}" ]]; then
         ws_skills_dir="$work_dir/.claude/skills"
         mkdir -p "$ws_skills_dir"
-        for skill in metaskill metamemory metabot voice phone-call skill-hub; do
+        rm -rf "$ws_skills_dir/metabot"
+        for skill in metaskill metamemory codexbot voice phone-call skill-hub; do
           if [[ -d "$SKILLS_DIR/$skill" ]]; then
             mkdir -p "$ws_skills_dir/$skill"
             cp -r "$SKILLS_DIR/$skill/." "$ws_skills_dir/$skill/"
@@ -416,8 +419,11 @@ print(json.dumps({'botName': sys.argv[1], 'source': sys.argv[2]}))
     fi
 
     echo "==> Restarting service..."
-    if command -v pm2 &>/dev/null && pm2 list 2>/dev/null | grep -q metabot; then
-      pm2 restart metabot && echo "    Restarted via pm2"
+    if command -v pm2 &>/dev/null && pm2 list 2>/dev/null | grep -q codexbot; then
+      pm2 restart codexbot && echo "    Restarted via pm2"
+    elif command -v pm2 &>/dev/null && pm2 list 2>/dev/null | grep -q metabot; then
+      pm2 delete metabot >/dev/null 2>&1 || true
+      pm2 start ecosystem.config.cjs >/dev/null 2>&1 && echo "    Migrated PM2 process to codexbot"
     elif pgrep -f "tsx src/index" &>/dev/null; then
       pkill -f "tsx src/index"
       (cd "$METABOT_SRC" && nohup npm run dev > /tmp/metabot.log 2>&1 &)
@@ -457,8 +463,8 @@ print(json.dumps({'botName': sys.argv[1], 'source': sys.argv[2]}))
     # Read from stdin if no text argument
     if [[ -z "$_text" ]]; then
       if [[ -t 0 ]]; then
-        echo "Usage: mb voice \"text to speak\" [--play] [-o file.mp3] [--provider doubao|openai|elevenlabs] [--voice <name>]"
-        echo "  Or pipe text: echo 'hello' | mb voice"
+        echo "Usage: cb voice \"text to speak\" [--play] [-o file.mp3] [--provider doubao|openai|elevenlabs] [--voice <name>]"
+        echo "  Or pipe text: echo 'hello' | cb voice"
         exit 1
       fi
       _text="$(cat)"
@@ -475,7 +481,7 @@ print(json.dumps(body))
 
     # Default output filename
     if [[ -z "$_output" ]]; then
-      _output="/tmp/mb-voice-$(date +%s).mp3"
+      _output="/tmp/cb-voice-$(date +%s).mp3"
     fi
 
     # Call API
@@ -510,52 +516,52 @@ print(json.dumps(body))
     ;;
   # --- Help ---
   *)
-    echo "mb - MetaBot API CLI"
+    echo "cb - MetaBot API CLI"
     echo ""
     echo "  Bots:"
-    echo "    mb bots                          - List all bots (local + peer)"
-    echo "    mb bot <name>                    - Get bot details"
+    echo "    cb bots                          - List all bots (local + peer)"
+    echo "    cb bot <name>                    - Get bot details"
     echo ""
     echo "  Agent Talk:"
-    echo "    mb talk <bot> <chatId> <prompt>  - Talk to a bot (auto-routes to peers)"
-    echo "    mb talk peer/bot <chatId> <prompt> - Talk to a specific peer's bot"
+    echo "    cb talk <bot> <chatId> <prompt>  - Talk to a bot (auto-routes to peers)"
+    echo "    cb talk peer/bot <chatId> <prompt> - Talk to a specific peer's bot"
     echo ""
     echo "  Peers:"
-    echo "    mb peers                         - List peers and their status"
+    echo "    cb peers                         - List peers and their status"
     echo ""
     echo "  Scheduling:"
-    echo "    mb schedule list                 - List all scheduled tasks"
-    echo "    mb schedule add <bot> <chatId> <delaySec> <prompt>"
-    echo "    mb schedule cron <bot> <chatId> '<cron>' <prompt>"
-    echo "    mb schedule pause <id>           - Pause a recurring task"
-    echo "    mb schedule resume <id>          - Resume a paused task"
-    echo "    mb schedule cancel <id>          - Cancel a scheduled task"
+    echo "    cb schedule list                 - List all scheduled tasks"
+    echo "    cb schedule add <bot> <chatId> <delaySec> <prompt>"
+    echo "    cb schedule cron <bot> <chatId> '<cron>' <prompt>"
+    echo "    cb schedule pause <id>           - Pause a recurring task"
+    echo "    cb schedule resume <id>          - Resume a paused task"
+    echo "    cb schedule cancel <id>          - Cancel a scheduled task"
     echo ""
     echo "  Voice:"
-    echo "    mb voice call <bot> <chatId> [prompt] [-w opening] - Start voice call"
-    echo "    mb voice transcript <sessionId>  - Get call transcript"
-    echo "    mb voice list                    - List active voice sessions"
-    echo "    mb voice config                  - Check RTC configuration"
-    echo "    mb voice tts \"text\" [--play] [-o f] - Text-to-speech (saves MP3)"
+    echo "    cb voice call <bot> <chatId> [prompt] [-w opening] - Start voice call"
+    echo "    cb voice transcript <sessionId>  - Get call transcript"
+    echo "    cb voice list                    - List active voice sessions"
+    echo "    cb voice config                  - Check RTC configuration"
+    echo "    cb voice tts \"text\" [--play] [-o f] - Text-to-speech (saves MP3)"
     echo ""
     echo ""
     echo "  Skill Hub:"
-    echo "    mb skills                        - List all shared skills"
-    echo "    mb skills search <query>         - Search skills"
-    echo "    mb skills publish <bot> <skill>  - Publish a skill"
-    echo "    mb skills install <skill> <bot>  - Install a skill to a bot"
+    echo "    cb skills                        - List all shared skills"
+    echo "    cb skills search <query>         - Search skills"
+    echo "    cb skills publish <bot> <skill>  - Publish a skill"
+    echo "    cb skills install <skill> <bot>  - Install a skill to a bot"
     echo ""
     echo "  Monitoring:"
-    echo "    mb stats                         - Cost & usage stats (per-bot, per-user)"
-    echo "    mb metrics                       - Prometheus metrics"
+    echo "    cb stats                         - Cost & usage stats (per-bot, per-user)"
+    echo "    cb metrics                       - Prometheus metrics"
     echo ""
     echo "  Voice:"
-    echo "    mb voice \"text\" [--play] [-o f]  - Text-to-speech (saves MP3)"
-    echo "    mb voice \"text\" --provider doubao - Use specific TTS provider"
-    echo "    echo 'hello' | mb voice           - Read from stdin"
+    echo "    cb voice \"text\" [--play] [-o f]  - Text-to-speech (saves MP3)"
+    echo "    cb voice \"text\" --provider doubao - Use specific TTS provider"
+    echo "    echo 'hello' | cb voice           - Read from stdin"
     echo ""
     echo "  System:"
-    echo "    mb health                        - Health check"
-    echo "    mb update                        - Pull latest & rebuild from GitHub"
+    echo "    cb health                        - Health check"
+    echo "    cb update                        - Pull latest & rebuild from GitHub"
     ;;
 esac

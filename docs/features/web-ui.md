@@ -25,7 +25,7 @@ The Web UI is a React SPA served at `/web/` on your MetaBot server. It connects 
 
 ## Quick Start
 
-1. Start MetaBot: `npm run dev` or `metabot start`
+1. Start MetaBot: `npm run dev` or `codexbot start`
 2. Open `http://localhost:9100/web/` in your browser
 3. Enter your `API_SECRET` as the token
 4. Select a bot and start chatting

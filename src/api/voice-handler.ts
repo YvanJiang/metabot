@@ -321,7 +321,7 @@ export async function doubaoTTS(text: string, speaker: string): Promise<Buffer> 
 
 export async function edgeTTS(text: string, voice: string): Promise<Buffer> {
   const { EdgeTTS } = await import('node-edge-tts');
-  const tmpFile = `/tmp/mb-edge-tts-${Date.now()}.mp3`;
+  const tmpFile = `/tmp/cb-edge-tts-${Date.now()}.mp3`;
   const tts = new EdgeTTS({ voice: voice || 'zh-CN-XiaoyiNeural', lang: 'zh-CN' });
   await tts.ttsPromise(text, tmpFile);
   const buf = await fsp.readFile(tmpFile);
@@ -477,7 +477,7 @@ export async function handleVoiceRequest(
   // Build agent prompt based on mode
   let agentPrompt: string;
   if (orchestratorMode) {
-    agentPrompt = `[Voice orchestrator mode — you can delegate tasks to other bots via "mb talk". Respond in 1-3 concise spoken sentences. Be conversational. Do NOT use Bash/Write/Edit for code. Do NOT use markdown. Respond in the same language the user speaks.]\n\n${transcript}`;
+    agentPrompt = `[Voice orchestrator mode — you can delegate tasks to other bots via "cb talk". Respond in 1-3 concise spoken sentences. Be conversational. Do NOT use Bash/Write/Edit for code. Do NOT use markdown. Respond in the same language the user speaks.]\n\n${transcript}`;
   } else if (voiceMode) {
     agentPrompt = `[Voice mode — respond in 1-2 concise spoken sentences. Be conversational and brief. Do NOT use any tools. Do NOT use markdown formatting. Respond in the same language the user speaks.]\n\n${transcript}`;
   } else {

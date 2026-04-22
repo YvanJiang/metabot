@@ -3,8 +3,8 @@
 ## Quick Start
 
 ```bash
-metabot start                       # start with PM2
-metabot update                      # pull + rebuild + restart
+codexbot start                       # start with PM2
+codexbot update                      # pull + rebuild + restart
 ```
 
 ## PM2 Auto-Start
@@ -21,9 +21,9 @@ This registers MetaBot as a system service that starts automatically after reboo
 
 ```bash
 pm2 start ecosystem.config.cjs      # start
-pm2 restart metabot                  # restart
-pm2 stop metabot                     # stop
-pm2 logs metabot                     # view logs
+pm2 restart codexbot                  # restart
+pm2 stop codexbot                     # stop
+pm2 logs codexbot                     # view logs
 pm2 status                           # process status
 ```
 
@@ -58,7 +58,7 @@ META_MEMORY_URL=https://memory.yourdomain.com
 API_SECRET=your-secret
 ```
 
-This allows `mb` and `mm` commands to work from any machine while keeping TLS termination at the proxy. If your servers are reachable only over a private network such as Tailscale or WireGuard, use those private addresses instead.
+This allows `cb` and `mm` commands to work from any machine while keeping TLS termination at the proxy. If your servers are reachable only over a private network such as Tailscale or WireGuard, use those private addresses instead.
 
 ## HTTPS with Caddy
 

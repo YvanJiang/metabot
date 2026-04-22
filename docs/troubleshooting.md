@@ -19,7 +19,7 @@ echo 'OPENAI_API_KEY=sk-ant-your-key' >> /path/to/metabot/.env
 Then restart the service:
 
 ```bash
-metabot restart
+codexbot restart
 # or: pkill -f "tsx src/index.ts" && cd /path/to/metabot && npm run dev
 ```
 
@@ -50,4 +50,4 @@ Exception: **2-member groups** (1 user + 1 bot) are treated like DMs — no @men
 :   Anthropic-compatible providers are no longer supported after the Codex migration. Use Codex login or an OpenAI API key.
 
 **Agent communication?**
-:   Currently synchronous request-response via the Agent Bus. Agents talk to each other using `mb talk` or the `/api/talk` endpoint. Async bidirectional protocols are on the roadmap.
+:   Currently synchronous request-response via the Agent Bus. Agents talk to each other using `cb talk` or the `/api/talk` endpoint. Async bidirectional protocols are on the roadmap.

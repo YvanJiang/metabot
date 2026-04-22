@@ -19,7 +19,7 @@ echo 'OPENAI_API_KEY=sk-ant-your-key' >> /path/to/metabot/.env
 然后重启服务：
 
 ```bash
-metabot restart
+codexbot restart
 # 或: pkill -f "tsx src/index.ts" && cd /path/to/metabot && npm run dev
 ```
 
@@ -50,4 +50,4 @@ Bot 在群聊中仅在被 **@提及** 时响应。私聊中回复所有消息。
 :   Codex 迁移后不再支持 Anthropic 兼容三方 Provider。请使用 `codex login` 或 OpenAI API Key。
 
 **Agent 间通信是实时的吗？**
-:   目前是同步请求-响应模式，通过 Agent 总线。Agent 通过 `mb talk` 或 `/api/talk` 互相对话。异步双向协议在规划中。
+:   目前是同步请求-响应模式，通过 Agent 总线。Agent 通过 `cb talk` 或 `/api/talk` 互相对话。异步双向协议在规划中。

@@ -11,27 +11,27 @@ argument-hint: "[list|search|publish|install] [args]"
 
 Discover and install skills shared across MetaBot instances and bots.
 
-## Quick Commands (mb shortcut)
+## Quick Commands (cb shortcut)
 
-The `mb` CLI handles auth automatically. **Always prefer `mb` over raw curl:**
+The `cb` CLI handles auth automatically. **Always prefer `cb` over raw curl:**
 
 ```bash
 # Browse available skills
-mb skills                              # List all skills (local + peer)
-mb skills search <query>               # Search by keyword
+cb skills                              # List all skills (local + peer)
+cb skills search <query>               # Search by keyword
 
 # Get skill details
-mb skills get <name>                   # View full skill info and SKILL.md content
+cb skills get <name>                   # View full skill info and SKILL.md content
 
 # Install a skill to a bot
-mb skills install <skillName> <botName>       # Install from local hub
-mb skills install <skillName> <botName> peer:<peerName>  # Install from peer
+cb skills install <skillName> <botName>       # Install from local hub
+cb skills install <skillName> <botName> peer:<peerName>  # Install from peer
 
 # Publish a skill (share with others)
-mb skills publish <botName> <skillName>  # Publish a bot's skill to the hub
+cb skills publish <botName> <skillName>  # Publish a bot's skill to the hub
 
 # Remove a skill from the hub
-mb skills remove <name>                # Unpublish
+cb skills remove <name>                # Unpublish
 ```
 
 ## When to Use
@@ -45,21 +45,21 @@ mb skills remove <name>                # Unpublish
 
 ### Finding and installing a skill
 ```bash
-mb skills search "calendar"             # Find calendar-related skills
-mb skills get lark-calendar             # See details
-mb skills install lark-calendar mybot   # Install to mybot
+cb skills search "calendar"             # Find calendar-related skills
+cb skills get lark-calendar             # See details
+cb skills install lark-calendar mybot   # Install to mybot
 ```
 
 ### Publishing a bot's skill
 ```bash
-mb skills publish whis data-analysis    # Share whis's data-analysis skill
-mb skills                               # Verify it's listed
+cb skills publish whis data-analysis    # Share whis's data-analysis skill
+cb skills                               # Verify it's listed
 ```
 
 ### Installing from a peer instance
 ```bash
-mb skills                               # See all skills including peer skills
-mb skills install data-viz mybot peer:alice  # Install from peer "alice"
+cb skills                               # See all skills including peer skills
+cb skills install data-viz mybot peer:alice  # Install from peer "alice"
 ```
 
 ## Guidelines

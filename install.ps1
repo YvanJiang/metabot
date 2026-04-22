@@ -472,11 +472,13 @@ $oldSkillDir = Join-Path $env:USERPROFILE ".codex\skills\memory"
 if (Test-Path $oldSkillDir) { Remove-Item $oldSkillDir -Recurse -Force }
 Write-Success "metamemory skill installed -> $(Join-Path $SkillsDir 'metamemory')"
 
-# Install metabot skill
-Write-Info "Installing metabot skill..."
-New-Item -ItemType Directory -Path (Join-Path $SkillsDir "metabot") -Force | Out-Null
-Copy-Item (Join-Path $MetabotHome "src\skills\metabot\SKILL.md") (Join-Path $SkillsDir "metabot\SKILL.md") -Force
-Write-Success "metabot skill installed -> $(Join-Path $SkillsDir 'metabot')"
+# Install codexbot skill
+Write-Info "Installing codexbot skill..."
+$legacyMetabotSkill = Join-Path $SkillsDir "metabot"
+if (Test-Path $legacyMetabotSkill) { Remove-Item $legacyMetabotSkill -Recurse -Force }
+New-Item -ItemType Directory -Path (Join-Path $SkillsDir "codexbot") -Force | Out-Null
+Copy-Item (Join-Path $MetabotHome "src\skills\codexbot\SKILL.md") (Join-Path $SkillsDir "codexbot\SKILL.md") -Force
+Write-Success "codexbot skill installed -> $(Join-Path $SkillsDir 'codexbot')"
 
 # Install voice skill
 Write-Info "Installing voice skill..."
@@ -526,7 +528,7 @@ if (-not $SkipConfig) {
 if ($DeployWorkDir) {
     $SkillsDest = Join-Path $DeployWorkDir ".codex\skills"
 
-    $deploySkills = @("metaskill", "metamemory", "metabot", "voice", "skill-hub")
+    $deploySkills = @("metaskill", "metamemory", "codexbot", "voice", "skill-hub")
     if ($HasFeishu) { $deploySkills += "feishu-doc" }
 
     foreach ($skill in $deploySkills) {
@@ -555,7 +557,7 @@ New-Item -ItemType Directory -Path $LocalBin -Force | Out-Null
 
 $HasBash = Test-Command "bash"
 
-$cliTools = @("mm", "mb", "metabot")
+$cliTools = @("mm", "cb", "codexbot")
 if ($HasFeishu) { $cliTools += "fd" }
 
 if ($HasBash) {
@@ -570,7 +572,7 @@ if ($HasBash) {
             if ($ApiSecret) {
                 (Get-Content $scriptPath -Raw) -replace 'changeme', $ApiSecret | Set-Content $scriptPath -NoNewline
             }
-            if ($ApiPort -and $cli -eq "mb") {
+            if ($ApiPort -and $cli -eq "cb") {
                 (Get-Content $scriptPath -Raw) -replace '9100', $ApiPort | Set-Content $scriptPath -NoNewline
             }
 
@@ -589,12 +591,12 @@ if ($HasBash) {
     }
 
     if ($HasFeishu) {
-        Write-Success "mm/mb/metabot/fd CLI tools installed to $LocalBin (with .cmd wrappers)"
+        Write-Success "mm/cb/codexbot/fd CLI tools installed to $LocalBin (with .cmd wrappers)"
     } else {
-        Write-Success "mm/mb/metabot CLI tools installed to $LocalBin (with .cmd wrappers)"
+        Write-Success "mm/cb/codexbot CLI tools installed to $LocalBin (with .cmd wrappers)"
     }
 } else {
-    Write-Warn "Git Bash not found. CLI tools (mm, mb, metabot) require bash."
+    Write-Warn "Git Bash not found. CLI tools (mm, cb, codexbot) require bash."
     Write-Warn "Install Git for Windows (https://git-scm.com) to enable CLI tools."
 }
 
@@ -659,9 +661,14 @@ try {
 
 # Always delete + start fresh
 try {
-    $pm2Desc = pm2 describe metabot 2>$null
+    $pm2Desc = pm2 describe codexbot 2>$null
     if ($LASTEXITCODE -eq 0) {
-        Write-Info "Removing old MetaBot PM2 process..."
+        Write-Info "Removing old CodexBot PM2 process..."
+        pm2 delete codexbot 2>$null
+    }
+    $legacyPm2Desc = pm2 describe metabot 2>$null
+    if ($LASTEXITCODE -eq 0) {
+        Write-Info "Removing legacy MetaBot PM2 process..."
         pm2 delete metabot 2>$null
     }
 } catch {}
@@ -699,9 +706,9 @@ if ($MetamemoryInstalled) {
 
 Write-Host ""
 Write-Host "  Commands:" -ForegroundColor White
-Write-Host "    pm2 logs metabot          # View MetaBot logs"
-Write-Host "    pm2 restart metabot       # Restart MetaBot"
-Write-Host "    pm2 stop metabot          # Stop MetaBot"
+Write-Host "    pm2 logs codexbot         # View MetaBot logs"
+Write-Host "    pm2 restart codexbot      # Restart MetaBot"
+Write-Host "    pm2 stop codexbot         # Stop MetaBot"
 if ($MetamemoryInstalled) {
     Write-Host "    mm search <query>         # Search MetaMemory"
     Write-Host "    mm folders                # Browse knowledge tree"
@@ -725,6 +732,6 @@ if (-not $SkipConfig) {
         Write-Host "    $StepNum. Open Telegram and message your bot -- it's ready now!"
         $StepNum++
     }
-    Write-Host "    $StepNum. Check logs: pm2 logs metabot"
+    Write-Host "    $StepNum. Check logs: pm2 logs codexbot"
 }
 Write-Host ""

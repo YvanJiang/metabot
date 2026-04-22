@@ -3,8 +3,8 @@
 ## 快速启动
 
 ```bash
-metabot start                       # 用 PM2 启动
-metabot update                      # 拉取 + 构建 + 重启
+codexbot start                       # 用 PM2 启动
+codexbot update                      # 拉取 + 构建 + 重启
 ```
 
 ## PM2 开机自启
@@ -19,9 +19,9 @@ pm2 startup && pm2 save
 
 ```bash
 pm2 start ecosystem.config.cjs      # 启动
-pm2 restart metabot                  # 重启
-pm2 stop metabot                     # 停止
-pm2 logs metabot                     # 查看日志
+pm2 restart codexbot                  # 重启
+pm2 stop codexbot                     # 停止
+pm2 logs codexbot                     # 查看日志
 pm2 status                           # 进程状态
 ```
 
@@ -50,7 +50,7 @@ META_MEMORY_URL=http://your-server:8100
 API_SECRET=your-secret
 ```
 
-这样 `mb` 和 `mm` 命令可以从任何机器使用。
+这样 `cb` 和 `mm` 命令可以从任何机器使用。
 
 ## HTTPS（Caddy 反向代理）
 

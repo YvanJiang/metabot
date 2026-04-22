@@ -25,7 +25,7 @@ Web UI 是一个 React SPA，部署在 MetaBot 服务器的 `/web/` 路径。通
 
 ## 快速开始
 
-1. 启动 MetaBot：`npm run dev` 或 `metabot start`
+1. 启动 MetaBot：`npm run dev` 或 `codexbot start`
 2. 打开 `http://localhost:9100/web/`
 3. 输入 `API_SECRET` 作为 Token
 4. 选择一个 Bot 开始聊天

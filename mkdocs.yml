@@ -88,9 +88,9 @@ plugins:
               - Use Cases: usage/use-cases.md
             - Reference:
               - REST API: reference/api.md
-              - mb CLI (Agent Bus): reference/cli-mb.md
+              - cb CLI (Agent Bus): reference/cli-cb.md
               - mm CLI (MetaMemory): reference/cli-mm.md
-              - metabot CLI: reference/cli-metabot.md
+              - codexbot CLI: reference/cli-codexbot.md
             - Deployment:
               - Production: deployment/production.md
             - Development:
@@ -140,9 +140,9 @@ nav:
     - 使用场景: usage/use-cases.md
   - 参考:
     - REST API: reference/api.md
-    - mb CLI (Agent Bus): reference/cli-mb.md
+    - cb CLI (Agent Bus): reference/cli-cb.md
     - mm CLI (MetaMemory): reference/cli-mm.md
-    - metabot CLI: reference/cli-metabot.md
+    - codexbot CLI: reference/cli-codexbot.md
   - 部署:
     - 生产部署: deployment/production.md
   - 开发:

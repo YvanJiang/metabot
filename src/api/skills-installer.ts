@@ -6,7 +6,7 @@ import { execFileSync, execSync } from 'node:child_process';
 import type { Logger } from '../utils/logger.js';
 
 /** Skills installed for all platforms. */
-const COMMON_SKILLS = ['metaskill', 'metamemory', 'metabot', 'phone-call', 'skill-hub'];
+const COMMON_SKILLS = ['metaskill', 'metamemory', 'codexbot', 'phone-call', 'skill-hub'];
 
 /** Lark CLI AI Agent skills — installed via `npx skills add larksuite/cli` and
  *  symlinked into ~/.codex/skills/ automatically. We copy them to the bot

@@ -80,10 +80,15 @@ fi
 step "Phase 1: Stopping MetaBot services"
 
 if command -v pm2 &>/dev/null; then
+  if pm2 describe codexbot &>/dev/null 2>&1; then
+    info "Stopping CodexBot PM2 process..."
+    pm2 delete codexbot 2>/dev/null || true
+    success "CodexBot PM2 process removed"
+  fi
   if pm2 describe metabot &>/dev/null 2>&1; then
-    info "Stopping MetaBot PM2 process..."
+    info "Stopping legacy MetaBot PM2 process..."
     pm2 delete metabot 2>/dev/null || true
-    success "MetaBot PM2 process removed"
+    success "Legacy MetaBot PM2 process removed"
   else
     info "No MetaBot PM2 process found"
   fi
@@ -113,7 +118,7 @@ fi
 # ============================================================================
 step "Phase 2: Removing CLI tools"
 
-for cli in mm mb metabot fd; do
+for cli in mm cb codexbot mb metabot fd; do
   if [[ -f "$LOCAL_BIN/$cli" ]]; then
     rm -f "$LOCAL_BIN/$cli"
     success "Removed $LOCAL_BIN/$cli"
@@ -141,16 +146,16 @@ if [[ -f "$BASH_ALIASES" ]]; then
     success "Removed mm() shortcut from ~/.bash_aliases"
   fi
 
-  # Remove mb() block (from "# MetaBot API shortcuts" to closing "}")
-  if grep -q 'mb()' "$BASH_ALIASES" 2>/dev/null; then
+  # Remove cb() block (from "# MetaBot API shortcuts" to closing "}")
+  if grep -q 'cb()' "$BASH_ALIASES" 2>/dev/null; then
     awk '
       /^# MetaBot API shortcuts/ { skip=1; next }
-      skip && /^[^ \t]/ && !/^(export METABOT|mb\(\))/ { skip=0 }
+      skip && /^[^ \t]/ && !/^(export METABOT|cb\(\))/ { skip=0 }
       skip { next }
       { print }
     ' "$BASH_ALIASES" > "$BASH_ALIASES.tmp" && mv "$BASH_ALIASES.tmp" "$BASH_ALIASES"
     CLEANED=true
-    success "Removed mb() shortcut from ~/.bash_aliases"
+    success "Removed cb() shortcut from ~/.bash_aliases"
   fi
 
   if [[ "$CLEANED" == "false" ]]; then
@@ -171,7 +176,7 @@ fi
 # ============================================================================
 step "Phase 4: Removing Codex skills"
 
-for skill in metaskill metamemory metabot voice feishu-doc; do
+for skill in metaskill metamemory codexbot metabot voice feishu-doc; do
   if [[ -d "$SKILLS_DIR/$skill" ]]; then
     rm -rf "$SKILLS_DIR/$skill"
     success "Removed skill: $skill"
@@ -238,7 +243,7 @@ step "Phase 6: Cleanup workspace deployments"
 WORKSPACE_DIRS=()
 # Try to find from backup or known locations
 for dir in "$HOME/metabot-workspace" "$HOME/workspace" "$HOME/projects"; do
-  if [[ -d "$dir/.codex/skills/metabot" ]] || [[ -d "$dir/.codex/skills/metamemory" ]]; then
+  if [[ -d "$dir/.codex/skills/codexbot" ]] || [[ -d "$dir/.codex/skills/metamemory" ]]; then
     WORKSPACE_DIRS+=("$dir")
   fi
 done
@@ -248,7 +253,7 @@ if [[ ${#WORKSPACE_DIRS[@]} -gt 0 ]]; then
     echo ""
     info "Found deployed MetaBot skills in: $ws"
     if prompt_yn "Remove deployed skills from $ws?"; then
-      for skill in metaskill metamemory metabot voice; do
+      for skill in metaskill metamemory codexbot metabot voice; do
         rm -rf "$ws/.codex/skills/$skill" 2>/dev/null || true
       done
       success "Removed deployed skills from $ws"
@@ -269,10 +274,10 @@ echo "  ╚═══════════════════════
 echo -e "${NC}"
 echo ""
 echo -e "  ${BOLD}Removed:${NC}"
-echo "    - PM2 processes (metabot, metamemory)"
-echo "    - CLI tools (mm, mb, metabot)"
+echo "    - PM2 processes (codexbot, legacy metabot, metamemory)"
+echo "    - CLI tools (mm, cb, codexbot, legacy mb/metabot)"
 echo "    - Shell shortcuts from ~/.bash_aliases"
-echo "    - Codex skills (metaskill, metamemory, metabot, lark-cli skills)"
+echo "    - Codex skills (metaskill, metamemory, codexbot, legacy metabot, lark-cli skills)"
 echo "    - lark-cli config (~/.lark-cli)"
 echo "    - MetaBot directory ($METABOT_HOME)"
 if [[ -d "$HOME/metabot-backup" ]]; then

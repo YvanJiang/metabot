@@ -64,7 +64,7 @@ export function LoginPage() {
               id="token-input"
               className={styles.input}
               type="password"
-              placeholder="mb-xxxxxxxxxxxxxxxx"
+              placeholder="cb-xxxxxxxxxxxxxxxx"
               value={tokenInput}
               onChange={(e) => setTokenInput(e.target.value)}
               autoFocus

@@ -22,10 +22,10 @@ MetaBot sets it free. It gives every agent a Codex brain, persistent shared memo
 | **IM Bridge** | Chat with any agent from Feishu/Lark or Telegram (including mobile). Streaming cards with color-coded status. |
 | **Web UI** | Browser-based chat at `/web/` with WebSocket streaming, phone call voice mode (VAD), MetaMemory browser, dark/light themes. [Learn more](features/web-ui.md) |
 | **Voice Assistant** | Hands-free voice control via iOS Shortcuts (Jarvis mode) or Web UI phone call mode. Server-side STT + TTS. [Learn more](features/voice-jarvis.md) |
-| **Agent Bus** | REST API on port 9100. Agents talk to each other via `mb talk`. Create/remove bots at runtime. |
+| **Agent Bus** | REST API on port 9100. Agents talk to each other via `cb talk`. Create/remove bots at runtime. |
 | **Peers** | Federation system for cross-instance bot discovery and task routing. |
 | **Task Scheduler** | One-time delays and recurring cron jobs. Timezone-aware, persists across restarts. |
-| **CLI Tools** | `metabot`, `mm`, `mb` commands for management, memory, and agent bus. |
+| **CLI Tools** | `codexbot`, `mm`, `cb` commands for management, memory, and agent bus. |
 
 ## Quick Install
 
