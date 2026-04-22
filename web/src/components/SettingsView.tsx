@@ -241,11 +241,11 @@ export function SettingsView() {
       <div className={styles.version}>
         MetaBot Web &middot; Built with{' '}
         <a
-          href="https://github.com/anthropics/claude-code"
+          href="https://github.com/anthropics/gpt-5-codex-code"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Claude Code
+          Codex
         </a>
       </div>
 

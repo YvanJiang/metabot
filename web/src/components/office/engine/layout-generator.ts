@@ -1,7 +1,7 @@
 /* ============================================================
    Office Layout Generator
    Creates a large office where each bot has its own room
-   containing its sub-agents at individual desks.
+   containing its sub-skills at individual desks.
    ============================================================ */
 
 import { TileType, type TileMap, type Room, type Position } from '../types';
@@ -16,13 +16,13 @@ export interface LayoutInput {
   name: string;
   specialties?: string[];
   platform?: string;
-  agents?: SubAgent[];
+  skills?: SubAgent[];
 }
 
 export interface LayoutResult {
   tileMap: TileMap;
   rooms: Room[];
-  /** Key: "botName" for the lead, "botName/subAgentName" for sub-agents */
+  /** Key: "botName" for the lead, "botName/subAgentName" for sub-skills */
   agentPositions: Map<string, { seat: Position; desk: Position }>;
   playerSpawn: Position;
 }
@@ -36,13 +36,13 @@ interface RoomLayout {
 }
 
 /**
- * Create a room for a bot and its sub-agents.
- * The bot lead sits at a prominent desk; sub-agents fill rows behind.
+ * Create a room for a bot and its sub-skills.
+ * The bot lead sits at a prominent desk; sub-skills fill rows behind.
  */
 function createTeamRoom(
   id: string,
   name: string,
-  memberCount: number, // lead + sub-agents
+  memberCount: number, // lead + sub-skills
   offsetX: number,
   offsetY: number,
 ): RoomLayout {
@@ -66,7 +66,7 @@ function createTeamRoom(
   }
 
   return {
-    room: { id, name, x: offsetX, y: offsetY, width, height, agents: [] },
+    room: { id, name, x: offsetX, y: offsetY, width, height, skills: [] },
     desks,
     seats,
     width,
@@ -84,10 +84,10 @@ export function generateLayout(bots: LayoutInput[]): LayoutResult {
     };
   }
 
-  // Each bot gets its own room. Members = lead (the bot) + its sub-agents.
+  // Each bot gets its own room. Members = lead (the bot) + its sub-skills.
   const teamRooms: { bot: LayoutInput; members: string[]; memberCount: number }[] = [];
   for (const bot of bots) {
-    const subNames = (bot.agents || []).map((a) => a.name);
+    const subNames = (bot.skills || []).map((a) => a.name);
     teamRooms.push({
       bot,
       members: [bot.name, ...subNames],
@@ -193,13 +193,13 @@ export function generateLayout(bots: LayoutInput[]): LayoutResult {
       if (seat.y < totalHeight && seat.x < totalWidth) tiles[seat.y][seat.x] = TileType.CHAIR;
 
       const memberName = t.members[mi];
-      // Key: "botName" for lead, "botName/subAgentName" for sub-agents
+      // Key: "botName" for lead, "botName/subAgentName" for sub-skills
       const key = mi === 0 ? memberName : `${t.bot.name}/${memberName}`;
       agentPositions.set(key, { seat, desk });
       agentNames.push(key);
     }
 
-    rooms.push({ ...room, agents: agentNames });
+    rooms.push({ ...room, skills: agentNames });
   }
 
   // Draw corridors (fill VOID rows between room rows)

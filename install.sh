@@ -278,15 +278,15 @@ else
   success "PM2 already installed"
 fi
 
-if command -v claude &>/dev/null; then
-  success "Claude CLI found: $(command -v claude)"
+if command -v codex &>/dev/null; then
+  success "Codex CLI found: $(command -v codex)"
 else
-  info "Installing Claude CLI..."
-  npm_install_global @anthropic-ai/claude-code
-  if command -v claude &>/dev/null; then
-    success "Claude CLI installed"
+  info "Installing Codex CLI..."
+  npm_install_global @openai/codex
+  if command -v codex &>/dev/null; then
+    success "Codex CLI installed"
   else
-    warn "Claude CLI install failed. Install manually: sudo npm install -g @anthropic-ai/claude-code"
+    warn "Codex CLI install failed. Install manually: sudo npm install -g @openai/codex"
   fi
 fi
 
@@ -308,76 +308,38 @@ if [[ "$SKIP_CONFIG" == "false" ]]; then
   # ------ 4a: Working directory ------
   echo ""
   echo -e "${BOLD}Working Directory:${NC}"
-  prompt_input WORK_DIR "Project directory for Claude to work in" "$HOME/metabot-workspace"
+  prompt_input WORK_DIR "Project directory for Codex to work in" "$HOME/metabot-workspace"
   mkdir -p "$WORK_DIR"
   success "Working directory: ${WORK_DIR}"
 
-  # ------ 4b: Claude AI authentication ------
+  # ------ 4b: Codex AI authentication ------
   echo ""
-  echo -e "${BOLD}Claude AI Authentication:${NC}"
-  echo "  1) Claude Code Subscription (OAuth — run 'claude login' after install)"
-  echo "  2) Anthropic API Key (sk-ant-...)"
-  echo "  3) Third-party provider (Kimi/Moonshot, DeepSeek, GLM, etc.)"
+  echo -e "${BOLD}Codex AI Authentication:${NC}"
+  echo "  1) Codex Subscription (OAuth — run 'codex login' after install)"
+  echo "  2) OpenAI API Key (sk-ant-...)"
+  echo "  3) Unsupported third-party provider"
   prompt_choice AUTH_CHOICE "1"
 
-  CLAUDE_AUTH_ENV_LINES=""
-  CLAUDE_AUTH_METHOD="subscription"
+  CODEX_AUTH_ENV_LINES=""
+  CODEX_AUTH_METHOD="subscription"
 
   case "$AUTH_CHOICE" in
     1)
-      CLAUDE_AUTH_METHOD="subscription"
-      info "Using Claude Code Subscription. Run 'claude login' after install."
+      CODEX_AUTH_METHOD="subscription"
+      info "Using Codex Subscription. Run 'codex login' after install."
       ;;
     2)
-      CLAUDE_AUTH_METHOD="anthropic_key"
-      prompt_secret ANTHROPIC_API_KEY "Anthropic API Key (sk-ant-...)"
-      if [[ -z "$ANTHROPIC_API_KEY" ]]; then
+      CODEX_AUTH_METHOD="anthropic_key"
+      prompt_secret OPENAI_API_KEY "OpenAI API Key (sk-ant-...)"
+      if [[ -z "$OPENAI_API_KEY" ]]; then
         error "API key is required."; exit 1
       fi
-      CLAUDE_AUTH_ENV_LINES="ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}"
+      CODEX_AUTH_ENV_LINES="OPENAI_API_KEY=${OPENAI_API_KEY}"
       ;;
     3)
-      CLAUDE_AUTH_METHOD="third_party"
-      echo ""
-      echo -e "  ${BOLD}Select provider:${NC}"
-      echo "    1) Kimi/Moonshot  (https://platform.moonshot.cn)"
-      echo "    2) DeepSeek       (https://platform.deepseek.com)"
-      echo "    3) GLM/Zhipu      (https://open.bigmodel.cn)"
-      echo "    4) Custom URL"
-      prompt_choice PROVIDER_CHOICE "1"
-
-      case "$PROVIDER_CHOICE" in
-        1) PROVIDER_NAME="Kimi/Moonshot"; PROVIDER_BASE_URL="https://api.moonshot.ai/anthropic"
-           PROVIDER_DEFAULT_MODEL=""; PROVIDER_DEFAULT_SMALL_MODEL="" ;;
-        2) PROVIDER_NAME="DeepSeek"; PROVIDER_BASE_URL="https://api.deepseek.com/anthropic"
-           PROVIDER_DEFAULT_MODEL="deepseek-chat"; PROVIDER_DEFAULT_SMALL_MODEL="deepseek-chat" ;;
-        3) PROVIDER_NAME="GLM/Zhipu"; PROVIDER_BASE_URL="https://api.z.ai/api/anthropic"
-           PROVIDER_DEFAULT_MODEL="glm-4.5"; PROVIDER_DEFAULT_SMALL_MODEL="" ;;
-        4) PROVIDER_NAME="Custom"
-           prompt_input PROVIDER_BASE_URL "API Base URL (e.g. https://api.example.com/anthropic)"
-           PROVIDER_DEFAULT_MODEL=""; PROVIDER_DEFAULT_SMALL_MODEL="" ;;
-        *) PROVIDER_NAME="Kimi/Moonshot"; PROVIDER_BASE_URL="https://api.moonshot.ai/anthropic"
-           PROVIDER_DEFAULT_MODEL=""; PROVIDER_DEFAULT_SMALL_MODEL="" ;;
-      esac
-
-      info "Provider: ${PROVIDER_NAME} (${PROVIDER_BASE_URL})"
-      prompt_secret PROVIDER_API_KEY "${PROVIDER_NAME} API Key"
-      if [[ -z "$PROVIDER_API_KEY" ]]; then
-        error "API key is required."; exit 1
-      fi
-
-      prompt_input PROVIDER_MODEL "Model name (enter for default)" "${PROVIDER_DEFAULT_MODEL}"
-      prompt_input PROVIDER_SMALL_MODEL "Small/fast model (enter to skip)" "${PROVIDER_DEFAULT_SMALL_MODEL}"
-
-      CLAUDE_AUTH_ENV_LINES="# ${PROVIDER_NAME} Provider
-ANTHROPIC_BASE_URL=${PROVIDER_BASE_URL}
-ANTHROPIC_AUTH_TOKEN=${PROVIDER_API_KEY}"
-      [[ -n "$PROVIDER_MODEL" ]] && CLAUDE_AUTH_ENV_LINES="${CLAUDE_AUTH_ENV_LINES}
-ANTHROPIC_MODEL=${PROVIDER_MODEL}"
-      [[ -n "$PROVIDER_SMALL_MODEL" ]] && CLAUDE_AUTH_ENV_LINES="${CLAUDE_AUTH_ENV_LINES}
-ANTHROPIC_SMALL_FAST_MODEL=${PROVIDER_SMALL_MODEL}"
-      [[ "$PROVIDER_CHOICE" == "2" ]] && CLAUDE_AUTH_ENV_LINES="${CLAUDE_AUTH_ENV_LINES}
-API_TIMEOUT_MS=600000"
+      error "Third-party Anthropic-compatible providers are no longer supported in the Codex migration."
+      error "Please rerun the installer and choose Codex login or OpenAI API key."
+      exit 1
       ;;
   esac
 
@@ -445,10 +407,10 @@ API_TIMEOUT_MS=600000"
   LOG_LEVEL="info"
   META_MEMORY_URL="http://localhost:8100"
 
-  # Claude executable path
-  CLAUDE_PATH=""
-  if command -v claude &>/dev/null; then
-    CLAUDE_PATH="$(command -v claude)"
+  # Codex executable path
+  CODEX_PATH=""
+  if command -v codex &>/dev/null; then
+    CODEX_PATH="$(command -v codex)"
   fi
 fi
 
@@ -470,20 +432,20 @@ if [[ "$SKIP_CONFIG" == "false" ]]; then
     echo "API_PORT=${API_PORT}"
     echo "API_SECRET=${API_SECRET}"
     echo ""
-    echo "# Claude AI Authentication"
-    if [[ "$CLAUDE_AUTH_METHOD" == "subscription" ]]; then
-      echo "# Using Claude Code Subscription (OAuth). Run 'claude login' to authenticate."
-    elif [[ -n "${CLAUDE_AUTH_ENV_LINES:-}" ]]; then
-      echo "$CLAUDE_AUTH_ENV_LINES"
+    echo "# Codex AI Authentication"
+    if [[ "$CODEX_AUTH_METHOD" == "subscription" ]]; then
+      echo "# Using Codex Subscription (OAuth). Run 'codex login' to authenticate."
+    elif [[ -n "${CODEX_AUTH_ENV_LINES:-}" ]]; then
+      echo "$CODEX_AUTH_ENV_LINES"
     fi
     echo ""
-    echo "# Claude Settings"
-    echo "CLAUDE_DEFAULT_WORKING_DIRECTORY=${WORK_DIR}"
-    echo "# CLAUDE_MAX_TURNS="
-    echo "# CLAUDE_MAX_BUDGET_USD="
+    echo "# Codex Settings"
+    echo "CODEX_DEFAULT_WORKING_DIRECTORY=${WORK_DIR}"
+    echo "# CODEX_MAX_TURNS="
+    echo "# CODEX_MAX_BUDGET_USD="
     echo "LOG_LEVEL=${LOG_LEVEL}"
-    if [[ -n "${CLAUDE_PATH:-}" ]]; then
-      echo "CLAUDE_EXECUTABLE_PATH=${CLAUDE_PATH}"
+    if [[ -n "${CODEX_PATH:-}" ]]; then
+      echo "CODEX_EXECUTABLE_PATH=${CODEX_PATH}"
     fi
     echo ""
     echo "# MetaMemory"
@@ -558,7 +520,7 @@ fi
 # ============================================================================
 step "Phase 6: Installing skills and setting up workspace"
 
-SKILLS_DIR="$HOME/.claude/skills"
+SKILLS_DIR="$HOME/.codex/skills"
 mkdir -p "$SKILLS_DIR"
 
 # Install metaskill (bundled in src/skills/metaskill/)
@@ -575,8 +537,8 @@ info "Installing metamemory skill..."
 mkdir -p "$SKILLS_DIR/metamemory"
 cp "$METABOT_HOME/src/memory/skill/SKILL.md" "$SKILLS_DIR/metamemory/SKILL.md"
 # Clean up old skill location if it exists
-if [[ -d "$HOME/.claude/skills/memory" ]]; then
-  rm -rf "$HOME/.claude/skills/memory"
+if [[ -d "$HOME/.codex/skills/memory" ]]; then
+  rm -rf "$HOME/.codex/skills/memory"
 fi
 success "metamemory skill installed → $SKILLS_DIR/metamemory"
 
@@ -652,7 +614,7 @@ if [[ "$SETUP_LARK_CLI" == "true" ]]; then
     fi
   fi
 
-  # Install lark-cli AI Agent skills for Claude Code
+  # Install lark-cli AI Agent skills for Codex
   info "Installing lark-cli AI Agent skills..."
   if npx skills add larksuite/cli --all -y -g 2>/dev/null; then
     success "lark-cli AI Agent skills installed (19 skills)"
@@ -685,7 +647,7 @@ fi
 
 # Deploy skills + CLAUDE.md to bot working directory
 if [[ -n "${DEPLOY_WORK_DIR:-}" ]]; then
-  SKILLS_DEST="$DEPLOY_WORK_DIR/.claude/skills"
+  SKILLS_DEST="$DEPLOY_WORK_DIR/.codex/skills"
 
   # Copy skills (common + lark-cli skills if Feishu)
   DEPLOY_SKILLS="metaskill metamemory metabot voice skill-hub"
@@ -1009,8 +971,8 @@ if [[ "${SKIP_CONFIG}" == "false" ]]; then
   echo -e "  ${BOLD}Working Dir:${NC}    ${WORK_DIR}"
   echo -e "  ${BOLD}API:${NC}            http://localhost:${API_PORT}"
   echo -e "  ${BOLD}API Secret:${NC}     ${API_SECRET:0:8}...${API_SECRET: -4}"
-  echo -e "  ${BOLD}Auth Method:${NC}    ${CLAUDE_AUTH_METHOD}"
-  if [[ "${CLAUDE_AUTH_METHOD}" == "third_party" ]]; then
+  echo -e "  ${BOLD}Auth Method:${NC}    ${CODEX_AUTH_METHOD}"
+  if [[ "${CODEX_AUTH_METHOD}" == "third_party" ]]; then
     echo -e "  ${BOLD}Provider:${NC}       ${PROVIDER_NAME}"
   fi
 fi
@@ -1030,8 +992,8 @@ echo ""
 if [[ "${SKIP_CONFIG}" == "false" ]]; then
   echo -e "  ${BOLD}Next Steps:${NC}"
   STEP_NUM=1
-  if [[ "${CLAUDE_AUTH_METHOD}" == "subscription" ]]; then
-    echo "    ${STEP_NUM}. Run 'claude login' in a separate terminal"
+  if [[ "${CODEX_AUTH_METHOD}" == "subscription" ]]; then
+    echo "    ${STEP_NUM}. Run 'codex login' in a separate terminal"
     STEP_NUM=$((STEP_NUM + 1))
   fi
   if [[ "$SETUP_FEISHU" == "true" ]]; then

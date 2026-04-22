@@ -1,6 +1,6 @@
 # 安全
 
-MetaBot 以 `bypassPermissions` 模式运行 Claude Code — 无交互式确认。请了解其影响。
+MetaBot 以 `bypassPermissions` 模式运行 Codex — 无交互式确认。请了解其影响。
 
 ## 权限模型
 
@@ -15,7 +15,7 @@ Claude 对 Bot 配置的工作目录拥有 **完整读写执行权限**。没有
 
 ## 费用限制
 
-使用 `maxBudgetUsd`（在 `bots.json` 中每个 Bot 设置，或通过 `CLAUDE_MAX_BUDGET_USD` 环境变量）限制每次请求的费用上限。
+使用 `maxBudgetUsd`（在 `bots.json` 中每个 Bot 设置，或通过 `CODEX_MAX_BUDGET_USD` 环境变量）限制每次请求的费用上限。
 
 ## API 认证
 

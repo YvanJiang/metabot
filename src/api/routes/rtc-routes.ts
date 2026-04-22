@@ -196,7 +196,7 @@ export async function handleRtcRoutes(
         timestamp: e.timestamp,
       })));
 
-      // Note: transcript injection into Claude session is handled client-side
+      // Note: transcript injection into Codex session is handled client-side
       // via WebSocket chat message (onTranscript callback in RtcCallOverlay)
 
       jsonResponse(res, 200, { success: true });

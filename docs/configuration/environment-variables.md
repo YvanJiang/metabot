@@ -13,15 +13,15 @@ All configuration is via `.env` file or system environment variables. Copy `.env
 | `API_SECRET` | — | Bearer token auth for API and MetaMemory. Generate one with `openssl rand -hex 32` |
 | `LOG_LEVEL` | `info` | Log level (debug, info, warn, error) |
 
-## Claude Code
+## Codex
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `DEFAULT_WORKING_DIRECTORY` | — | Working directory for Claude (single-bot mode) |
-| `CLAUDE_MAX_TURNS` | unlimited | Max turns per request |
-| `CLAUDE_MAX_BUDGET_USD` | unlimited | Max cost per request (USD) |
-| `CLAUDE_MODEL` | SDK default | Claude model to use |
-| `CLAUDE_EXECUTABLE_PATH` | auto-detect | Path to `claude` binary |
+| `DEFAULT_WORKING_DIRECTORY` | — | Working directory for Codex (single-bot mode) |
+| `CODEX_MAX_TURNS` | unlimited | Max turns per request |
+| `CODEX_MAX_BUDGET_USD` | unlimited | Max cost per request (USD) |
+| `CODEX_MODEL` | SDK default | Codex model to use |
+| `CODEX_EXECUTABLE_PATH` | auto-detect | Path to `codex` binary |
 
 ## MetaMemory
 
@@ -79,22 +79,9 @@ Falls back to the first Feishu bot's credentials if not set.
 | `VOLCENGINE_TTS_RESOURCE_ID` | `volc.service_type.10029` | Doubao TTS resource ID |
 | `OPENAI_API_KEY` | — | Fallback for Whisper STT + OpenAI TTS |
 | `ELEVENLABS_API_KEY` | — | ElevenLabs TTS |
-| `VOICE_MODEL` | — | Override Claude model for voice mode |
+| `VOICE_MODEL` | — | Override Codex model for voice mode |
 
-## Third-Party AI Providers
+## Provider Support
 
-MetaBot supports any Anthropic-compatible API:
-
-```bash
-# Kimi/Moonshot
-ANTHROPIC_BASE_URL=https://api.moonshot.ai/anthropic
-ANTHROPIC_AUTH_TOKEN=your-key
-
-# DeepSeek
-ANTHROPIC_BASE_URL=https://api.deepseek.com/anthropic
-ANTHROPIC_AUTH_TOKEN=your-key
-
-# GLM/Zhipu
-ANTHROPIC_BASE_URL=https://api.z.ai/api/anthropic
-ANTHROPIC_AUTH_TOKEN=your-key
-```
+Anthropic-compatible providers were removed in the Codex migration.
+Use `codex login` or provide an OpenAI API key for Codex.

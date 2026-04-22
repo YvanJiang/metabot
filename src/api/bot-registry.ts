@@ -87,7 +87,7 @@ export class BotRegistry {
       ...(b.config.specialties?.length ? { specialties: b.config.specialties } : {}),
       ...(b.config.icon ? { icon: b.config.icon } : {}),
       platform: b.platform,
-      workingDirectory: b.config.claude.defaultWorkingDirectory,
+      workingDirectory: b.config.codex.defaultWorkingDirectory,
       ...(b.config.ttsVoice ? { ttsVoice: b.config.ttsVoice } : {}),
     }));
   }

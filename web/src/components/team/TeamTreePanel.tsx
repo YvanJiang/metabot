@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import type { BotStatus, AgentMetadata } from '../../store';
+import type { BotStatus, SkillMetadata } from '../../store';
 import s from './TeamTreePanel.module.css';
 
 /* ── Icons ── */
@@ -63,7 +63,7 @@ export function TeamTreePanel({ bots, selectedKey, onSelect }: TeamTreePanelProp
   const [search, setSearch] = useState('');
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set(bots.map((b) => b.name)));
 
-  const totalAgents = useMemo(() => bots.reduce((sum, b) => sum + 1 + (b.agents?.length || 0), 0), [bots]);
+  const totalAgents = useMemo(() => bots.reduce((sum, b) => sum + 1 + (b.skills?.length || 0), 0), [bots]);
   const totalCost = useMemo(() => bots.reduce((sum, b) => sum + b.stats.totalCostUsd, 0), [bots]);
 
   const filteredBots = useMemo(() => {
@@ -72,7 +72,7 @@ export function TeamTreePanel({ bots, selectedKey, onSelect }: TeamTreePanelProp
     return bots.filter((b) => {
       if (b.name.toLowerCase().includes(q)) return true;
       if (b.description?.toLowerCase().includes(q)) return true;
-      if (b.agents?.some((a) => a.name.toLowerCase().includes(q))) return true;
+      if (b.skills?.some((a) => a.name.toLowerCase().includes(q))) return true;
       return false;
     });
   }, [bots, search]);
@@ -90,7 +90,7 @@ export function TeamTreePanel({ bots, selectedKey, onSelect }: TeamTreePanelProp
     <div className={s.panel}>
       {/* Header */}
       <div className={s.header}>
-        <span className={s.headerLabel}>agents</span>
+        <span className={s.headerLabel}>skills</span>
         <span className={s.headerCount}>{totalAgents}</span>
       </div>
 
@@ -99,7 +99,7 @@ export function TeamTreePanel({ bots, selectedKey, onSelect }: TeamTreePanelProp
         <span className={s.searchIcon}><IconSearch /></span>
         <input
           className={s.searchInput}
-          placeholder="Filter agents..."
+          placeholder="Filter skills..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -109,7 +109,7 @@ export function TeamTreePanel({ bots, selectedKey, onSelect }: TeamTreePanelProp
       <div className={s.tree}>
         {filteredBots.map((bot) => {
           const isExpanded = expanded.has(bot.name);
-          const hasAgents = bot.agents && bot.agents.length > 0;
+          const hasAgents = bot.skills && bot.skills.length > 0;
           const isSelected = selectedKey === bot.name;
 
           return (
@@ -134,10 +134,10 @@ export function TeamTreePanel({ bots, selectedKey, onSelect }: TeamTreePanelProp
                 <StatusDot status={bot.status} />
               </div>
 
-              {/* Sub-agents */}
+              {/* Sub-skills */}
               {hasAgents && isExpanded && (
                 <div className={s.subAgents}>
-                  {bot.agents!.map((agent: AgentMetadata) => {
+                  {bot.skills!.map((agent: SkillMetadata) => {
                     const agentKey = `${bot.name}/${agent.name}`;
                     const isAgentSelected = selectedKey === agentKey;
                     return (
@@ -159,13 +159,13 @@ export function TeamTreePanel({ bots, selectedKey, onSelect }: TeamTreePanelProp
         })}
 
         {filteredBots.length === 0 && (
-          <div className={s.emptyTree}>No agents match "{search}"</div>
+          <div className={s.emptyTree}>No skills match "{search}"</div>
         )}
       </div>
 
       {/* Footer */}
       <div className={s.footer}>
-        <span>{totalAgents} agents</span>
+        <span>{totalAgents} skills</span>
         <span className={s.footerDivider} />
         <span>${totalCost.toFixed(2)}</span>
       </div>

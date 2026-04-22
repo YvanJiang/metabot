@@ -6,9 +6,9 @@ import type { Logger } from '../utils/logger.js';
 import type { IncomingMessage, CardState, PendingQuestion } from '../types.js';
 import type { IMessageSender } from './message-sender.interface.js';
 import type { DocSync } from '../sync/doc-sync.js';
-import { ClaudeExecutor, type ExecutionHandle } from '../claude/executor.js';
-import { StreamProcessor } from '../claude/stream-processor.js';
-import { SessionManager } from '../claude/session-manager.js';
+import { CodexExecutor, type ExecutionHandle } from '../codex/executor.js';
+import { StreamProcessor } from '../codex/stream-processor.js';
+import { SessionManager } from '../codex/session-manager.js';
 import { RateLimiter } from './rate-limiter.js';
 import { OutputsManager } from './outputs-manager.js';
 import { MemoryClient } from '../memory/memory-client.js';
@@ -65,7 +65,7 @@ export interface ApiTaskOptions {
   allowedTools?: string[];
   /** Called on every card state update (streaming). `final` is true on the last update. */
   onUpdate?: (state: CardState, messageId: string, final: boolean) => void;
-  /** Called when Claude asks a question. Return the answer JSON string. */
+  /** Called when Codex asks a question. Return the answer JSON string. */
   onQuestion?: (question: PendingQuestion) => Promise<string>;
   /** Called with output files after execution completes (before cleanup). */
   onOutputFiles?: (files: import('./outputs-manager.js').OutputFile[]) => void;
@@ -98,7 +98,7 @@ export interface ActivityEventData {
 }
 
 export class MessageBridge {
-  private executor: ClaudeExecutor;
+  private executor: CodexExecutor;
   private sessionManager: SessionManager;
   private outputsManager: OutputsManager;
   private audit: AuditLogger;
@@ -119,9 +119,9 @@ export class MessageBridge {
     memoryServerUrl: string,
     memorySecret?: string,
   ) {
-    this.executor = new ClaudeExecutor(config, logger);
-    this.sessionManager = new SessionManager(config.claude.defaultWorkingDirectory, logger, config.name);
-    this.outputsManager = new OutputsManager(config.claude.outputsBaseDir, logger);
+    this.executor = new CodexExecutor(config, logger);
+    this.sessionManager = new SessionManager(config.codex.defaultWorkingDirectory, logger, config.name);
+    this.outputsManager = new OutputsManager(config.codex.outputsBaseDir, logger);
     this.audit = new AuditLogger(logger);
     this.costTracker = new CostTracker();
 
@@ -209,7 +209,7 @@ export class MessageBridge {
       const handled = await this.commandHandler.handle(msg);
       if (handled) return;
 
-      // Unrecognized /xxx command — pass through to Claude
+      // Unrecognized /xxx command — pass through to Codex
       if (this.runningTasks.has(chatId)) {
         await this.sender.sendTextNotice(
           chatId,
@@ -376,7 +376,7 @@ export class MessageBridge {
     const sessionId = task.processor.getSessionId() || '';
     task.executionHandle.sendAnswer(pending.toolUseId, sessionId, answerJson);
 
-    this.logger.info({ chatId, answers: task.collectedAnswers, toolUseId: pending.toolUseId }, 'Sent all answers to Claude');
+    this.logger.info({ chatId, answers: task.collectedAnswers, toolUseId: pending.toolUseId }, 'Sent all answers to Codex');
 
     // Check if there are more queued AskUserQuestion calls
     const nextPending = task.processor.getPendingQuestion();
@@ -521,7 +521,7 @@ export class MessageBridge {
     const abortController = new AbortController();
 
     // Prepare downloads directory (bot-isolated)
-    const downloadsDir = this.config.claude.downloadsDir;
+    const downloadsDir = this.config.codex.downloadsDir;
     fs.mkdirSync(downloadsDir, { recursive: true });
 
     // Handle image download if present
@@ -761,12 +761,12 @@ export class MessageBridge {
           lastState = {
             ...lastState,
             status: lastState.responseText ? 'complete' : 'error',
-            errorMessage: lastState.responseText ? undefined : 'Claude session ended unexpectedly',
+            errorMessage: lastState.responseText ? undefined : 'Codex session ended unexpectedly',
           };
         }
       }
 
-      // Auto-retry with fresh session when Claude can't find the conversation
+      // Auto-retry with fresh session when Codex can't find the conversation
       if (lastState.status === 'error' && isStaleSessionError(lastState.errorMessage) && session.sessionId) {
         this.logger.info({ chatId }, 'Stale session detected, retrying with fresh session');
         this.sessionManager.resetSession(chatId);
@@ -851,12 +851,12 @@ export class MessageBridge {
       // Send completion notification for long-running tasks (>10s) so user gets a Feishu push
       await this.sendCompletionNotice(chatId, lastState, durationMs);
 
-      // Send any output files produced by Claude
+      // Send any output files produced by Codex
       await this.outputHandler.sendOutputFiles(chatId, outputsDir, processor, lastState);
     } catch (err: any) {
-      this.logger.error({ err, chatId, userId }, 'Claude execution error');
+      this.logger.error({ err, chatId, userId }, 'Codex execution error');
 
-      // Auto-retry with fresh session when Claude can't find the conversation or context overflows
+      // Auto-retry with fresh session when Codex can't find the conversation or context overflows
       const errMsg: string = err.message || '';
       if ((isStaleSessionError(errMsg) || isContextOverflowError(errMsg)) && session.sessionId) {
         const isOverflow = isContextOverflowError(errMsg);
@@ -1121,12 +1121,12 @@ export class MessageBridge {
           lastState = {
             ...lastState,
             status: lastState.responseText ? 'complete' : 'error',
-            errorMessage: lastState.responseText ? undefined : 'Claude session ended unexpectedly',
+            errorMessage: lastState.responseText ? undefined : 'Codex session ended unexpectedly',
           };
         }
       }
 
-      // Auto-retry with fresh session when Claude can't find the conversation or context overflows
+      // Auto-retry with fresh session when Codex can't find the conversation or context overflows
       if (lastState.status === 'error' && (isStaleSessionError(lastState.errorMessage) || isContextOverflowError(lastState.errorMessage)) && session.sessionId) {
         const isOverflow = isContextOverflowError(lastState.errorMessage);
         this.logger.info({ chatId, isOverflow }, isOverflow ? 'API task: context overflow, retrying with fresh session' : 'API task: stale session detected, retrying with fresh session');
@@ -1202,7 +1202,7 @@ export class MessageBridge {
     } catch (err: any) {
       this.logger.error({ err, chatId, userId }, 'API task execution error');
 
-      // Auto-retry with fresh session when Claude can't find the conversation or context overflows
+      // Auto-retry with fresh session when Codex can't find the conversation or context overflows
       const errMsg: string = err.message || '';
       if ((isStaleSessionError(errMsg) || isContextOverflowError(errMsg)) && session.sessionId) {
         const isOverflow = isContextOverflowError(errMsg);
@@ -1365,13 +1365,13 @@ export class MessageBridge {
    * Only sends for tasks that took longer than 10 seconds.
    */
   /** Record session and messages in the cross-platform registry. */
-  private recordSession(chatId: string, prompt: string, responseText: string | undefined, claudeSessionId: string | undefined, costUsd: number | undefined, durationMs: number | undefined): void {
+  private recordSession(chatId: string, prompt: string, responseText: string | undefined, codexSessionId: string | undefined, costUsd: number | undefined, durationMs: number | undefined): void {
     if (!this.sessionRegistry) return;
     try {
       this.sessionRegistry.createOrUpdate({
         chatId,
         botName: this.config.name,
-        claudeSessionId,
+        codexSessionId,
         workingDirectory: this.sessionManager.getSession(chatId).workingDirectory,
         prompt,
         responseText,
@@ -1396,9 +1396,9 @@ export class MessageBridge {
     const costStr = state.sessionCostUsd ? ` · $${state.sessionCostUsd.toFixed(2)}` : (state.costUsd ? ` · $${state.costUsd.toFixed(2)}` : '');
     const statusWord = state.status === 'complete' ? 'Done' : 'Failed';
 
-    // Model display name: strip "claude-" prefix for brevity (e.g. "opus-4-7")
+    // Model display name: strip "gpt-5-codex-" prefix for brevity (e.g. "opus-4-7")
     const modelStr = state.model
-      ? ` · ${state.model.replace(/^claude-/, '')}`
+      ? ` · ${state.model.replace(/^gpt-5-codex-/, '')}`
       : '';
 
     // Context usage: show totalTokens / contextWindow as percentage

@@ -13,7 +13,7 @@ metabot/
 │   │   ├── message-bridge.ts       # Core orchestrator
 │   │   ├── rate-limiter.ts         # Card update throttling
 │   │   └── outputs-manager.ts      # Output file lifecycle
-│   ├── claude/
+│   ├── codex/
 │   │   ├── executor.ts             # Agent SDK wrapper
 │   │   ├── stream-processor.ts     # SDK message → card state
 │   │   └── session-manager.ts      # Session store
@@ -68,8 +68,8 @@ metabot/
 
 | Package | Purpose |
 |---------|---------|
-| `@anthropic-ai/claude-agent-sdk` | Claude Code Agent SDK |
-| `@anthropic-ai/claude-code` | Claude Code CLI (peer dependency) |
+| `@anthropic-ai/codex-agent-sdk` | Codex Agent SDK |
+| `@openai/codex` | Codex CLI (peer dependency) |
 | `@larksuiteoapi/node-sdk` | Feishu/Lark SDK |
 | `tsx` | TypeScript execution (dev) |
 | `vitest` | Test framework |

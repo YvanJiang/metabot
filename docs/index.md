@@ -8,16 +8,16 @@
 
 ---
 
-Claude Code is the most capable AI coding agent — but it's trapped in your laptop terminal.
+Codex is the most capable AI coding agent — but it's trapped in your laptop terminal.
 
-MetaBot sets it free. It gives every agent a Claude Code brain, persistent shared memory, the ability to create new agents, and a communication bus. All accessible from Feishu or Telegram on your phone.
+MetaBot sets it free. It gives every agent a Codex brain, persistent shared memory, the ability to create new agents, and a communication bus. All accessible from Feishu or Telegram on your phone.
 
 ## Core Components
 
 | Component | Description |
 |-----------|-------------|
-| **Claude Code Kernel** | Every bot is a full Claude Code instance — Read, Write, Edit, Bash, Glob, Grep, WebSearch, MCP, and more. `bypassPermissions` mode for autonomous operation. |
-| **MetaSkill** | Agent factory. `/metaskill ios app` generates a complete `.claude/` agent team (orchestrator + specialists + code-reviewer). |
+| **Codex Kernel** | Every bot is a full Codex instance — Read, Write, Edit, Bash, Glob, Grep, WebSearch, MCP, and more. `bypassPermissions` mode for autonomous operation. |
+| **MetaSkill** | Agent factory. `/metaskill ios app` generates a complete `.codex/` agent team (orchestrator + specialists + code-reviewer). |
 | **MetaMemory** | Embedded SQLite knowledge store with full-text search and Web UI. Agents read/write Markdown documents across sessions. |
 | **IM Bridge** | Chat with any agent from Feishu/Lark or Telegram (including mobile). Streaming cards with color-coded status. |
 | **Web UI** | Browser-based chat at `/web/` with WebSocket streaming, phone call voice mode (VAD), MetaMemory browser, dark/light themes. [Learn more](features/web-ui.md) |
@@ -41,7 +41,7 @@ MetaBot sets it free. It gives every agent a Claude Code brain, persistent share
     irm https://raw.githubusercontent.com/xvirobotics/metabot/main/install.ps1 | iex
     ```
 
-The installer walks you through: working directory, Claude auth, IM credentials, and auto-start with PM2.
+The installer walks you through: working directory, Codex auth, IM credentials, and auto-start with PM2.
 
 [Get Started](getting-started/installation.md){ .md-button .md-button--primary }
 [View on GitHub](https://github.com/xvirobotics/metabot){ .md-button }

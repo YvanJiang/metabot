@@ -16,7 +16,7 @@
 | `/help` | 显示可用命令 |
 | `/metaskill ...` | 生成 Agent 团队、Agent 或 Skill |
 | `/metabot` | 加载 Agent 总线文档（调度、Bot 管理、跨实例对话） |
-| `/任意命令` | 非内置命令自动转发给 Claude Code 作为 skill |
+| `/任意命令` | 非内置命令自动转发给 Codex 作为 skill |
 
 ## 说明
 

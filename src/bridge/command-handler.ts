@@ -2,7 +2,7 @@ import type { BotConfigBase } from '../config.js';
 import type { Logger } from '../utils/logger.js';
 import type { IncomingMessage } from '../types.js';
 import type { IMessageSender } from './message-sender.interface.js';
-import { SessionManager } from '../claude/session-manager.js';
+import { SessionManager } from '../codex/session-manager.js';
 import { MemoryClient } from '../memory/memory-client.js';
 import { AuditLogger } from '../utils/audit-logger.js';
 import type { DocSync } from '../sync/doc-sync.js';
@@ -48,7 +48,7 @@ export class CommandHandler {
           '`/help` - Show this help message',
           '',
           '**Usage:**',
-          'Send any text message to start a conversation with Claude Code.',
+          'Send any text message to start a conversation with Codex.',
           'Each chat has an independent session with a fixed working directory.',
           '',
           '**Memory Commands:**',
@@ -82,7 +82,7 @@ export class CommandHandler {
       case '/status': {
         const session = this.sessionManager.getSession(chatId);
         const isRunning = !!this.getRunningTask(chatId);
-        const activeModel = session.model || this.config.claude.model || '_default_';
+        const activeModel = session.model || this.config.codex.model || '_default_';
         await this.sender.sendTextNotice(chatId, '📊 Status', [
           `**User:** \`${userId}\``,
           `**Working Directory:** \`${session.workingDirectory}\``,
@@ -112,7 +112,7 @@ export class CommandHandler {
       }
 
       default:
-        // Unrecognized /xxx commands — not handled here, pass through to Claude
+        // Unrecognized /xxx commands — not handled here, pass through to Codex
         return false;
     }
   }
@@ -230,7 +230,7 @@ export class CommandHandler {
 
   private async handleModelCommand(chatId: string, args: string): Promise<void> {
     const session = this.sessionManager.getSession(chatId);
-    const botDefault = this.config.claude.model;
+    const botDefault = this.config.codex.model;
 
     // No args — show current model
     if (!args) {
@@ -241,7 +241,7 @@ export class CommandHandler {
         '',
         'Usage:',
         '- `/model list` — Show available models',
-        '- `/model <name>` — Set session model (e.g. `claude-opus-4-7`, `claude-sonnet-4-6`, `claude-haiku-4-5`)',
+        '- `/model <name>` — Set session model (e.g. `gpt-5-codex`, `gpt-5.1-codex-max`, `codex-mini-latest`)',
         '- `/model reset` — Clear override, use bot default',
       ];
       await this.sender.sendTextNotice(chatId, '🤖 Model', lines.join('\n'));
@@ -252,21 +252,16 @@ export class CommandHandler {
     if (args.toLowerCase() === 'list' || args.toLowerCase() === 'ls') {
       const active = session.model || botDefault;
       const models = [
-        { id: 'claude-opus-4-7', label: 'Opus 4.7', note: 'Most capable · 200k context' },
-        { id: 'claude-opus-4-7[1m]', label: 'Opus 4.7 (1M)', note: '1M context window' },
-        { id: 'claude-opus-4-6', label: 'Opus 4.6', note: '200k context' },
-        { id: 'claude-opus-4-6[1m]', label: 'Opus 4.6 (1M)', note: '1M context window' },
-        { id: 'claude-sonnet-4-6', label: 'Sonnet 4.6', note: 'Balanced · 200k context' },
-        { id: 'claude-sonnet-4-6[1m]', label: 'Sonnet 4.6 (1M)', note: '1M context window' },
-        { id: 'claude-haiku-4-5', label: 'Haiku 4.5', note: 'Fastest · 200k context' },
+        { id: 'gpt-5-codex', label: 'GPT-5-Codex', note: 'Default frontier coding model' },
+        { id: 'gpt-5.3-codex', label: 'GPT-5.3-Codex', note: 'Most capable long-horizon coding model' },
+        { id: 'gpt-5.1-codex-max', label: 'GPT-5.1-Codex-Max', note: 'Good for longer-running tasks' },
+        { id: 'codex-mini-latest', label: 'codex-mini-latest', note: 'Fastest and cheapest Codex option' },
       ];
-      const lines = ['**Available Claude models:**', ''];
+      const lines = ['**Available Codex models:**', ''];
       for (const m of models) {
         const marker = m.id === active ? ' ✅' : '';
         lines.push(`- \`${m.id}\` — ${m.label} · ${m.note}${marker}`);
       }
-      lines.push('');
-      lines.push('_Tip: append `[1m]` to a model name to enable the 1M context window. Only Opus 4.7/4.6 and Sonnet 4.6 support it._');
       lines.push('Use `/model <name>` to switch.');
       await this.sender.sendTextNotice(chatId, '🤖 Available Models', lines.join('\n'));
       return;

@@ -13,15 +13,15 @@
 | `API_SECRET` | — | Bearer Token 认证 |
 | `LOG_LEVEL` | `info` | 日志级别（debug, info, warn, error） |
 
-## Claude Code
+## Codex
 
 | 变量 | 默认 | 说明 |
 |------|------|------|
-| `DEFAULT_WORKING_DIRECTORY` | — | Claude 工作目录（单 Bot 模式） |
-| `CLAUDE_MAX_TURNS` | 不限 | 每次请求最大轮次 |
-| `CLAUDE_MAX_BUDGET_USD` | 不限 | 每次请求费用上限（美元） |
-| `CLAUDE_MODEL` | SDK 默认 | Claude 模型 |
-| `CLAUDE_EXECUTABLE_PATH` | 自动检测 | `claude` 二进制路径 |
+| `DEFAULT_WORKING_DIRECTORY` | — | Codex 工作目录（单 Bot 模式） |
+| `CODEX_MAX_TURNS` | 不限 | 每次请求最大轮次 |
+| `CODEX_MAX_BUDGET_USD` | 不限 | 每次请求费用上限（美元） |
+| `CODEX_MODEL` | SDK 默认 | Codex 模型 |
+| `CODEX_EXECUTABLE_PATH` | 自动检测 | `codex` 二进制路径 |
 
 ## MetaMemory
 
@@ -79,22 +79,9 @@
 | `VOLCENGINE_TTS_RESOURCE_ID` | `volc.service_type.10029` | 豆包 TTS 资源 ID |
 | `OPENAI_API_KEY` | — | Whisper STT + OpenAI TTS 备选 |
 | `ELEVENLABS_API_KEY` | — | ElevenLabs TTS |
-| `VOICE_MODEL` | — | 语音模式使用的 Claude 模型（可选覆盖） |
+| `VOICE_MODEL` | — | 语音模式使用的 Codex 模型（可选覆盖） |
 
-## 第三方 AI 服务商
+## Provider Support
 
-支持任何 Anthropic 兼容 API：
-
-```bash
-# Kimi/月之暗面
-ANTHROPIC_BASE_URL=https://api.moonshot.ai/anthropic
-ANTHROPIC_AUTH_TOKEN=你的key
-
-# DeepSeek
-ANTHROPIC_BASE_URL=https://api.deepseek.com/anthropic
-ANTHROPIC_AUTH_TOKEN=你的key
-
-# GLM/智谱
-ANTHROPIC_BASE_URL=https://api.z.ai/api/anthropic
-ANTHROPIC_AUTH_TOKEN=你的key
-```
+Codex 迁移后不再支持 Anthropic 兼容三方 Provider。
+请使用 `codex login` 或为 Codex 配置 OpenAI API Key。

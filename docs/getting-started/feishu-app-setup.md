@@ -7,8 +7,8 @@ Step-by-step procedure to configure a Feishu bot for MetaBot.
 1. Go to **飞书开放平台开发者控制台**: [open.feishu.cn/app](https://open.feishu.cn/app)
 2. Click **"Create Custom App"**
 3. Fill in:
-    - **Name**: e.g. "Claude Code"
-    - **Description**: e.g. "Feishu to Claude Code bridge bot"
+    - **Name**: e.g. "Codex"
+    - **Description**: e.g. "Feishu to Codex bridge bot"
     - **Icon**: Pick any icon and color
 4. Click **Create**
 
@@ -71,6 +71,6 @@ Step-by-step procedure to configure a Feishu bot for MetaBot.
 ## Step 7: Test
 
 1. Open Feishu Messenger
-2. Search for your bot name (e.g. "Claude Code")
+2. Search for your bot name (e.g. "Codex")
 3. Send a test message
 4. The bot should respond with a streaming card showing Claude's response

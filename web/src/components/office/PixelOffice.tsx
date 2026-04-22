@@ -1,7 +1,7 @@
 /* ============================================================
    PixelOffice — 2D Pixel art virtual office for the Team tab.
-   Each bot gets its own room with sub-agents at desks inside.
-   Click any agent (lead or sub-agent) to open a chat session.
+   Each bot gets its own room with sub-skills at desks inside.
+   Click any agent (lead or skill) to open a chat session.
    ============================================================ */
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
@@ -60,30 +60,30 @@ export function PixelOffice() {
   const [hoveredAgent, setHoveredAgent] = useState<string | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-  // Count total sub-agents for summary
+  // Count total sub-skills for summary
   const totalSubAgents = useMemo(() => {
     if (!teamStatus) return 0;
-    return teamStatus.bots.reduce((sum, b) => sum + (b.agents?.length || 0), 0);
+    return teamStatus.bots.reduce((sum, b) => sum + (b.skills?.length || 0), 0);
   }, [teamStatus]);
 
-  // Generate layout: each bot gets a room with its sub-agents
+  // Generate layout: each bot gets a room with its sub-skills
   const layout = useMemo(() => {
     if (!teamStatus) return null;
     const bots = teamStatus.bots.map((b) => ({
       name: b.name,
       specialties: b.specialties,
       platform: b.platform,
-      agents: b.agents?.map((a) => ({
+      skills: b.skills?.map((a) => ({
         name: a.name,
         description: a.description,
         model: a.model,
       })),
     }));
     return generateLayout(bots);
-  }, [teamStatus?.bots.map((b) => `${b.name}:${b.agents?.length || 0}`).join(',')]);
+  }, [teamStatus?.bots.map((b) => `${b.name}:${b.skills?.length || 0}`).join(',')]);
 
-  // Build agent sprites for leads AND sub-agents
-  const agents = useMemo(() => {
+  // Build agent sprites for leads AND sub-skills
+  const skills = useMemo(() => {
     const map = new Map<string, AgentSprite>();
     if (!teamStatus || !layout) return map;
 
@@ -115,8 +115,8 @@ export function PixelOffice() {
       }
 
       // Sub-agent sprites
-      if (bot.agents) {
-        for (const sub of bot.agents) {
+      if (bot.skills) {
+        for (const sub of bot.skills) {
           const key = `${bot.name}/${sub.name}`;
           const subPos = layout.agentPositions.get(key);
           if (!subPos) continue;
@@ -124,10 +124,10 @@ export function PixelOffice() {
             botName: sub.name,
             position: subPos.seat,
             deskPosition: subPos.desk,
-            status: 'idle', // sub-agents don't have independent status
+            status: 'idle', // sub-skills don't have independent status
             color: agentColor(sub.name),
             description: sub.description,
-            platform: sub.model || 'sub-agent',
+            platform: sub.model || 'skill',
             isLead: false,
             parentBot: bot.name,
           });
@@ -157,15 +157,15 @@ export function PixelOffice() {
   }, []);
 
   // For chat panel: resolve the actual bot name to chat with
-  // Sub-agents chat through their parent bot
+  // Sub-skills chat through their parent bot
   const chatBotName = useMemo(() => {
     if (!selectedAgent) return null;
-    const sprite = agents.get(selectedAgent);
+    const sprite = skills.get(selectedAgent);
     return sprite?.parentBot || selectedAgent;
-  }, [selectedAgent, agents]);
+  }, [selectedAgent, skills]);
 
   const selectedBotStatus = teamStatus?.bots.find((b) => b.name === chatBotName);
-  const hoveredAgentSprite = hoveredAgent ? agents.get(hoveredAgent) : null;
+  const hoveredAgentSprite = hoveredAgent ? skills.get(hoveredAgent) : null;
 
   if (loading && !teamStatus) {
     return (
@@ -195,7 +195,7 @@ export function PixelOffice() {
           <span className={styles.statValue}>{summary.totalBots}</span> Bots
         </span>
         <span className={styles.stat}>
-          <span className={styles.statValue}>{totalSubAgents}</span> Sub-agents
+          <span className={styles.statValue}>{totalSubAgents}</span> Sub-skills
         </span>
         <span className={styles.stat}>
           <span className={styles.statBusy}>{summary.busyBots}</span> Busy
@@ -212,7 +212,7 @@ export function PixelOffice() {
           <OfficeCanvas
             tileMap={layout.tileMap}
             rooms={layout.rooms}
-            agents={agents}
+            skills={skills}
             playerSpawn={layout.playerSpawn}
             selectedAgent={selectedAgent}
             onSelectAgent={handleSelectAgent}

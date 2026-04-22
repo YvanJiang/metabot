@@ -244,16 +244,16 @@ if (-not (Test-Command "pm2")) {
     Write-Success "PM2 already installed"
 }
 
-# Claude CLI
-if (Test-Command "claude") {
-    Write-Success "Claude CLI found: $((Get-Command claude).Source)"
+# Codex CLI
+if (Test-Command "codex") {
+    Write-Success "Codex CLI found: $((Get-Command codex).Source)"
 } else {
-    Write-Info "Installing Claude CLI..."
-    npm install -g @anthropic-ai/claude-code
-    if (Test-Command "claude") {
-        Write-Success "Claude CLI installed"
+    Write-Info "Installing Codex CLI..."
+    npm install -g @openai/codex
+    if (Test-Command "codex") {
+        Write-Success "Codex CLI installed"
     } else {
-        Write-Warn "Claude CLI install failed. Install manually: npm install -g @anthropic-ai/claude-code"
+        Write-Warn "Codex CLI install failed. Install manually: npm install -g @openai/codex"
     }
 }
 Pop-Location
@@ -278,73 +278,38 @@ if (-not $SkipConfig) {
     Write-Host ""
     Write-Host "Working Directory:" -ForegroundColor White
     $DefaultWorkDir = Join-Path $env:USERPROFILE "metabot-workspace"
-    $WorkDir = Read-Input "Project directory for Claude to work in" $DefaultWorkDir
+    $WorkDir = Read-Input "Project directory for Codex to work in" $DefaultWorkDir
     if (-not (Test-Path $WorkDir)) { New-Item -ItemType Directory -Path $WorkDir -Force | Out-Null }
     Write-Success "Working directory: $WorkDir"
 
-    # ------ 4b: Claude AI authentication ------
+    # ------ 4b: Codex AI authentication ------
     Write-Host ""
-    Write-Host "Claude AI Authentication:" -ForegroundColor White
-    Write-Host "  1) Claude Code Subscription (OAuth - run 'claude login' after install)"
-    Write-Host "  2) Anthropic API Key (sk-ant-...)"
+    Write-Host "Codex AI Authentication:" -ForegroundColor White
+    Write-Host "  1) Codex Subscription (OAuth - run 'codex login' after install)"
+    Write-Host "  2) OpenAI API Key (sk-ant-...)"
     Write-Host "  3) Third-party provider (Kimi/Moonshot, DeepSeek, GLM, etc.)"
     $AuthChoice = Read-Choice "1"
 
-    $ClaudeAuthEnvLines = ""
-    $ClaudeAuthMethod = "subscription"
+    $CodexAuthEnvLines = ""
+    $CodexAuthMethod = "subscription"
 
     switch ($AuthChoice) {
         "1" {
-            $ClaudeAuthMethod = "subscription"
-            Write-Info "Using Claude Code Subscription. Run 'claude login' after install."
+            $CodexAuthMethod = "subscription"
+            Write-Info "Using Codex Subscription. Run 'codex login' after install."
         }
         "2" {
-            $ClaudeAuthMethod = "anthropic_key"
-            $AnthropicApiKey = Read-Secret "Anthropic API Key (sk-ant-...)"
+            $CodexAuthMethod = "anthropic_key"
+            $AnthropicApiKey = Read-Secret "OpenAI API Key (sk-ant-...)"
             if ([string]::IsNullOrWhiteSpace($AnthropicApiKey)) {
                 Write-Err "API key is required."; exit 1
             }
-            $ClaudeAuthEnvLines = "ANTHROPIC_API_KEY=$AnthropicApiKey"
+            $CodexAuthEnvLines = "OPENAI_API_KEY=$AnthropicApiKey"
         }
         "3" {
-            $ClaudeAuthMethod = "third_party"
-            Write-Host ""
-            Write-Host "  Select provider:" -ForegroundColor White
-            Write-Host "    1) Kimi/Moonshot  (https://platform.moonshot.cn)"
-            Write-Host "    2) DeepSeek       (https://platform.deepseek.com)"
-            Write-Host "    3) GLM/Zhipu      (https://open.bigmodel.cn)"
-            Write-Host "    4) Custom URL"
-            $ProviderChoice = Read-Choice "1"
-
-            $ProviderName = ""
-            $ProviderBaseUrl = ""
-            $ProviderDefaultModel = ""
-            $ProviderDefaultSmallModel = ""
-
-            switch ($ProviderChoice) {
-                "1" { $ProviderName = "Kimi/Moonshot"; $ProviderBaseUrl = "https://api.moonshot.ai/anthropic" }
-                "2" { $ProviderName = "DeepSeek"; $ProviderBaseUrl = "https://api.deepseek.com/anthropic"
-                      $ProviderDefaultModel = "deepseek-chat"; $ProviderDefaultSmallModel = "deepseek-chat" }
-                "3" { $ProviderName = "GLM/Zhipu"; $ProviderBaseUrl = "https://api.z.ai/api/anthropic"
-                      $ProviderDefaultModel = "glm-4.5" }
-                "4" { $ProviderName = "Custom"
-                      $ProviderBaseUrl = Read-Input "API Base URL (e.g. https://api.example.com/anthropic)" }
-                default { $ProviderName = "Kimi/Moonshot"; $ProviderBaseUrl = "https://api.moonshot.ai/anthropic" }
-            }
-
-            Write-Info "Provider: $ProviderName ($ProviderBaseUrl)"
-            $ProviderApiKey = Read-Secret "$ProviderName API Key"
-            if ([string]::IsNullOrWhiteSpace($ProviderApiKey)) {
-                Write-Err "API key is required."; exit 1
-            }
-
-            $ProviderModel = Read-Input "Model name (enter for default)" $ProviderDefaultModel
-            $ProviderSmallModel = Read-Input "Small/fast model (enter to skip)" $ProviderDefaultSmallModel
-
-            $ClaudeAuthEnvLines = "# $ProviderName Provider`nANTHROPIC_BASE_URL=$ProviderBaseUrl`nANTHROPIC_AUTH_TOKEN=$ProviderApiKey"
-            if ($ProviderModel) { $ClaudeAuthEnvLines += "`nANTHROPIC_MODEL=$ProviderModel" }
-            if ($ProviderSmallModel) { $ClaudeAuthEnvLines += "`nANTHROPIC_SMALL_FAST_MODEL=$ProviderSmallModel" }
-            if ($ProviderChoice -eq "2") { $ClaudeAuthEnvLines += "`nAPI_TIMEOUT_MS=600000" }
+            Write-Err "Third-party Anthropic-compatible providers are no longer supported in the Codex migration."
+            Write-Err "Please rerun the installer and choose Codex login or OpenAI API key."
+            exit 1
         }
     }
 
@@ -401,10 +366,10 @@ if (-not $SkipConfig) {
     $LogLevel = "info"
     $MemoryServerUrl = "http://localhost:8100"
 
-    # Claude executable path
-    $ClaudePath = ""
-    if (Test-Command "claude") {
-        $ClaudePath = (Get-Command claude).Source
+    # Codex executable path
+    $CodexPath = ""
+    if (Test-Command "codex") {
+        $CodexPath = (Get-Command codex).Source
     }
 }
 
@@ -427,26 +392,26 @@ BOTS_CONFIG=./bots.json
 API_PORT=$ApiPort
 API_SECRET=$ApiSecret
 
-# Claude AI Authentication
+# Codex AI Authentication
 "@
 
-    if ($ClaudeAuthMethod -eq "subscription") {
-        $envContent += "`n# Using Claude Code Subscription (OAuth). Run 'claude login' to authenticate."
-    } elseif ($ClaudeAuthEnvLines) {
-        $envContent += "`n$ClaudeAuthEnvLines"
+    if ($CodexAuthMethod -eq "subscription") {
+        $envContent += "`n# Using Codex Subscription (OAuth). Run 'codex login' to authenticate."
+    } elseif ($CodexAuthEnvLines) {
+        $envContent += "`n$CodexAuthEnvLines"
     }
 
     $envContent += @"
 
-# Claude Settings
-CLAUDE_DEFAULT_WORKING_DIRECTORY=$WorkDir
-# CLAUDE_MAX_TURNS=
-# CLAUDE_MAX_BUDGET_USD=
+# Codex Settings
+CODEX_DEFAULT_WORKING_DIRECTORY=$WorkDir
+# CODEX_MAX_TURNS=
+# CODEX_MAX_BUDGET_USD=
 LOG_LEVEL=$LogLevel
 "@
 
-    if ($ClaudePath) {
-        $envContent += "`nCLAUDE_EXECUTABLE_PATH=$ClaudePath"
+    if ($CodexPath) {
+        $envContent += "`nCODEX_EXECUTABLE_PATH=$CodexPath"
     }
 
     $envContent += @"
@@ -485,7 +450,7 @@ META_MEMORY_URL=$MemoryServerUrl
 # ============================================================================
 Write-Step "Phase 6: Installing skills and setting up workspace"
 
-$SkillsDir = Join-Path $env:USERPROFILE ".claude\skills"
+$SkillsDir = Join-Path $env:USERPROFILE ".codex\skills"
 New-Item -ItemType Directory -Path $SkillsDir -Force | Out-Null
 
 # Install metaskill
@@ -503,7 +468,7 @@ Write-Info "Installing metamemory skill..."
 New-Item -ItemType Directory -Path (Join-Path $SkillsDir "metamemory") -Force | Out-Null
 Copy-Item (Join-Path $MetabotHome "src\memory\skill\SKILL.md") (Join-Path $SkillsDir "metamemory\SKILL.md") -Force
 # Clean up old skill location if it exists
-$oldSkillDir = Join-Path $env:USERPROFILE ".claude\skills\memory"
+$oldSkillDir = Join-Path $env:USERPROFILE ".codex\skills\memory"
 if (Test-Path $oldSkillDir) { Remove-Item $oldSkillDir -Recurse -Force }
 Write-Success "metamemory skill installed -> $(Join-Path $SkillsDir 'metamemory')"
 
@@ -559,7 +524,7 @@ if (-not $SkipConfig) {
 
 # Deploy skills + CLAUDE.md to bot working directory
 if ($DeployWorkDir) {
-    $SkillsDest = Join-Path $DeployWorkDir ".claude\skills"
+    $SkillsDest = Join-Path $DeployWorkDir ".codex\skills"
 
     $deploySkills = @("metaskill", "metamemory", "metabot", "voice", "skill-hub")
     if ($HasFeishu) { $deploySkills += "feishu-doc" }
@@ -575,9 +540,9 @@ if ($DeployWorkDir) {
     }
 
     # Deploy CLAUDE.md to working directory
-    $workspaceClaude = Join-Path $MetabotHome "src\workspace\CLAUDE.md"
-    if (Test-Path $workspaceClaude) {
-        Copy-Item $workspaceClaude (Join-Path $DeployWorkDir "CLAUDE.md") -Force
+    $workspaceCodex = Join-Path $MetabotHome "src\workspace\CLAUDE.md"
+    if (Test-Path $workspaceCodex) {
+        Copy-Item $workspaceCodex (Join-Path $DeployWorkDir "CLAUDE.md") -Force
         Write-Success "Deployed CLAUDE.md -> $(Join-Path $DeployWorkDir 'CLAUDE.md')"
     }
 } else {
@@ -723,8 +688,8 @@ if (-not $SkipConfig) {
     Write-Host "  API:            " -ForegroundColor White -NoNewline; Write-Host "http://localhost:$ApiPort"
     $secretPreview = $ApiSecret.Substring(0, 8) + "..." + $ApiSecret.Substring($ApiSecret.Length - 4)
     Write-Host "  API Secret:     " -ForegroundColor White -NoNewline; Write-Host $secretPreview
-    Write-Host "  Auth Method:    " -ForegroundColor White -NoNewline; Write-Host $ClaudeAuthMethod
-    if ($ClaudeAuthMethod -eq "third_party") {
+    Write-Host "  Auth Method:    " -ForegroundColor White -NoNewline; Write-Host $CodexAuthMethod
+    if ($CodexAuthMethod -eq "third_party") {
         Write-Host "  Provider:       " -ForegroundColor White -NoNewline; Write-Host $ProviderName
     }
 }
@@ -746,8 +711,8 @@ Write-Host ""
 if (-not $SkipConfig) {
     Write-Host "  Next Steps:" -ForegroundColor White
     $StepNum = 1
-    if ($ClaudeAuthMethod -eq "subscription") {
-        Write-Host "    $StepNum. Run 'claude login' in a separate terminal"
+    if ($CodexAuthMethod -eq "subscription") {
+        Write-Host "    $StepNum. Run 'codex login' in a separate terminal"
         $StepNum++
     }
     if ($SetupFeishu) {

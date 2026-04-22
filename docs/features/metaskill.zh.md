@@ -4,7 +4,7 @@ Agent 工厂。一条命令生成完整的 Agent 团队、单个 Agent 或自定
 
 ## 功能
 
-`/metaskill` 会调研最佳实践，然后生成完整的 `.claude/` Agent 配置：
+`/metaskill` 会调研最佳实践，然后生成完整的 `.codex/` Agent 配置：
 
 - **Orchestrator** — 协调团队的主 Agent
 - **专家 Agent** — 特定领域的 Agent（前端、后端、运维等）
@@ -28,17 +28,17 @@ Agent 工厂。一条命令生成完整的 Agent 团队、单个 Agent 或自定
 
 ## 工作原理
 
-1. Claude 调研项目结构和最佳实践
-2. 生成 `.claude/` 配置文件（agents、skills、settings）
+1. Codex 调研项目结构和最佳实践
+2. 生成 `.codex/` 配置文件（agents、skills、settings）
 3. 保存到 Bot 的工作目录
 4. 新 Agent/Skill 立即可用
 
 ## 输出
 
-MetaSkill 在 `.claude/` 目录下生成文件：
+MetaSkill 在 `.codex/` 目录下生成文件：
 
 ```
-.claude/
+.codex/
 ├── agents/
 │   ├── orchestrator.md
 │   ├── frontend.md

@@ -23,7 +23,7 @@ npm run build
 npm run dev
 ```
 
-**Prerequisites:** Node.js 20+, Claude Code CLI installed and authenticated.
+**Prerequisites:** Node.js 20+, Codex CLI installed and authenticated.
 
 ## Development Commands
 

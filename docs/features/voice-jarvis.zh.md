@@ -25,7 +25,7 @@
         ↓
   HTTP POST 到 MetaBot /api/talk
         ↓
-  Agent 执行任务（Claude Code）
+  Agent 执行任务（Codex）
         ↓
   通过 Siri 语音回复
 ```

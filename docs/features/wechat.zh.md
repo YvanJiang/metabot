@@ -1,6 +1,6 @@
 # 微信接入
 
-MetaBot 支持通过微信 ClawBot 插件（iLink Bot API）接入个人微信，让你直接在微信里与 Claude Code Agent 对话。
+MetaBot 支持通过微信 ClawBot 插件（iLink Bot API）接入个人微信，让你直接在微信里与 Codex Agent 对话。
 
 !!! info "灰测阶段"
     微信 ClawBot 目前处于灰度测试阶段，需要 iPhone 微信 8.0.70+ 版本。Android 支持即将推出。
@@ -109,12 +109,12 @@ Waiting for scan...
 |------|------|--------|------|
 | `name` | 是 | — | Bot 标识名 |
 | `description` | 否 | — | Bot 描述 |
-| `defaultWorkingDirectory` | 是 | — | Claude 的工作目录 |
+| `defaultWorkingDirectory` | 是 | — | Codex 的工作目录 |
 | `wechatBotToken` | 否 | — | 预认证的 iLink token（可选，不填则 QR 登录） |
 | `ilinkBaseUrl` | 否 | `https://ilinkai.weixin.qq.com` | iLink API 地址 |
 | `maxTurns` | 否 | 不限 | 最大对话轮次 |
 | `maxBudgetUsd` | 否 | 不限 | 单次最大花费 |
-| `model` | 否 | SDK 默认 | Claude 模型 |
+| `model` | 否 | SDK 默认 | Codex 模型 |
 
 ## 环境变量模式
 
@@ -122,7 +122,7 @@ Waiting for scan...
 
 ```bash
 WECHAT_ILINK_ENABLED=true
-CLAUDE_DEFAULT_WORKING_DIRECTORY=/home/user/project
+CODEX_DEFAULT_WORKING_DIRECTORY=/home/user/project
 ```
 
 ## 消息支持

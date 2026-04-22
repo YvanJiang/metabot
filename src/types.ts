@@ -27,7 +27,7 @@ export interface CardState {
   durationMs?: number;
   errorMessage?: string;
   pendingQuestion?: PendingQuestion;
-  /** Primary model used (e.g. "claude-opus-4-7") */
+  /** Primary model used (e.g. "gpt-5-codex") */
   model?: string;
   /** Total input+output tokens consumed */
   totalTokens?: number;

@@ -18,7 +18,7 @@ fi
 # ============================================================================
 METABOT_HOME="${METABOT_HOME:-$HOME/metabot}"
 LOCAL_BIN="$HOME/.local/bin"
-SKILLS_DIR="$HOME/.claude/skills"
+SKILLS_DIR="$HOME/.codex/skills"
 BASH_ALIASES="$HOME/.bash_aliases"
 
 # ============================================================================
@@ -167,9 +167,9 @@ else
 fi
 
 # ============================================================================
-# Phase 4: Remove skills from ~/.claude/skills
+# Phase 4: Remove skills from ~/.codex/skills
 # ============================================================================
-step "Phase 4: Removing Claude skills"
+step "Phase 4: Removing Codex skills"
 
 for skill in metaskill metamemory metabot voice feishu-doc; do
   if [[ -d "$SKILLS_DIR/$skill" ]]; then
@@ -187,8 +187,8 @@ for skill in "$SKILLS_DIR"/lark-*; do
 done
 
 # Clean up old skill locations
-if [[ -d "$HOME/.claude/skills/memory" ]]; then
-  rm -rf "$HOME/.claude/skills/memory"
+if [[ -d "$HOME/.codex/skills/memory" ]]; then
+  rm -rf "$HOME/.codex/skills/memory"
   success "Removed legacy skill: memory"
 fi
 
@@ -238,7 +238,7 @@ step "Phase 6: Cleanup workspace deployments"
 WORKSPACE_DIRS=()
 # Try to find from backup or known locations
 for dir in "$HOME/metabot-workspace" "$HOME/workspace" "$HOME/projects"; do
-  if [[ -d "$dir/.claude/skills/metabot" ]] || [[ -d "$dir/.claude/skills/metamemory" ]]; then
+  if [[ -d "$dir/.codex/skills/metabot" ]] || [[ -d "$dir/.codex/skills/metamemory" ]]; then
     WORKSPACE_DIRS+=("$dir")
   fi
 done
@@ -249,7 +249,7 @@ if [[ ${#WORKSPACE_DIRS[@]} -gt 0 ]]; then
     info "Found deployed MetaBot skills in: $ws"
     if prompt_yn "Remove deployed skills from $ws?"; then
       for skill in metaskill metamemory metabot voice; do
-        rm -rf "$ws/.claude/skills/$skill" 2>/dev/null || true
+        rm -rf "$ws/.codex/skills/$skill" 2>/dev/null || true
       done
       success "Removed deployed skills from $ws"
     fi
@@ -272,7 +272,7 @@ echo -e "  ${BOLD}Removed:${NC}"
 echo "    - PM2 processes (metabot, metamemory)"
 echo "    - CLI tools (mm, mb, metabot)"
 echo "    - Shell shortcuts from ~/.bash_aliases"
-echo "    - Claude skills (metaskill, metamemory, metabot, lark-cli skills)"
+echo "    - Codex skills (metaskill, metamemory, metabot, lark-cli skills)"
 echo "    - lark-cli config (~/.lark-cli)"
 echo "    - MetaBot directory ($METABOT_HOME)"
 if [[ -d "$HOME/metabot-backup" ]]; then
@@ -282,6 +282,6 @@ fi
 echo ""
 echo -e "  ${BOLD}Not removed (manual cleanup if needed):${NC}"
 echo "    - PM2 global package (npm uninstall -g pm2)"
-echo "    - Claude CLI (npm uninstall -g @anthropic-ai/claude-code)"
+echo "    - Codex CLI (npm uninstall -g @openai/codex)"
 echo "    - Node.js"
 echo ""

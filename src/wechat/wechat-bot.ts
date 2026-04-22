@@ -59,9 +59,9 @@ export async function startWechatBot(
 
   botLogger.info('WeChat bot is running (long polling)');
   botLogger.info({
-    defaultWorkingDirectory: config.claude.defaultWorkingDirectory,
-    maxTurns: config.claude.maxTurns ?? 'unlimited',
-    maxBudgetUsd: config.claude.maxBudgetUsd ?? 'unlimited',
+    defaultWorkingDirectory: config.codex.defaultWorkingDirectory,
+    maxTurns: config.codex.maxTurns ?? 'unlimited',
+    maxBudgetUsd: config.codex.maxBudgetUsd ?? 'unlimited',
   }, 'Configuration');
 
   return {

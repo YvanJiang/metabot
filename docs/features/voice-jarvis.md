@@ -25,7 +25,7 @@ Talk to any MetaBot agent hands-free using AirPods and Siri. No app needed — j
         ↓
   HTTP POST to MetaBot /api/talk
         ↓
-  Agent executes (Claude Code)
+  Agent executes (Codex)
         ↓
   Response spoken back via Siri
 ```

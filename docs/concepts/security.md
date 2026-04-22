@@ -1,6 +1,6 @@
 # Security
 
-MetaBot runs Claude Code in `bypassPermissions` mode — no interactive approval. Understand the implications.
+MetaBot runs Codex in `bypassPermissions` mode — no interactive approval. Understand the implications.
 
 ## Permission Model
 
@@ -15,7 +15,7 @@ Control who can interact with your bots:
 
 ## Cost Limits
 
-Use `maxBudgetUsd` (per bot in `bots.json` or via `CLAUDE_MAX_BUDGET_USD` env var) to cap the cost of each individual request. This prevents runaway spending from a single query.
+Use `maxBudgetUsd` (per bot in `bots.json` or via `CODEX_MAX_BUDGET_USD` env var) to cap the cost of each individual request. This prevents runaway spending from a single query.
 
 ## API Authentication
 

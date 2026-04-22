@@ -125,7 +125,7 @@ export function BotManageDialog({ mode, bot, onClose }: BotManageDialogProps) {
                 className={styles.input}
                 value={model}
                 onChange={(e) => setModel(e.target.value)}
-                placeholder="claude-opus-4-7"
+                placeholder="gpt-5-codex"
               />
             </label>
             <label className={styles.field}>

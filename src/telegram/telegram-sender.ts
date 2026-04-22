@@ -52,7 +52,7 @@ function renderCardHtml(state: CardState): string {
   if (state.responseText) {
     parts.push(markdownToTelegramHtml(state.responseText));
   } else if (state.status === 'thinking') {
-    parts.push('<i>Claude is thinking...</i>');
+    parts.push('<i>Codex is thinking...</i>');
   }
 
   // Pending question
@@ -90,7 +90,7 @@ function renderCardHtml(state: CardState): string {
     }
     if (state.status === 'complete' || state.status === 'error') {
       if (state.model) {
-        statParts.push(state.model.replace(/^claude-/, ''));
+        statParts.push(state.model.replace(/^gpt-5-codex-/, ''));
       }
       if (state.durationMs !== undefined) {
         statParts.push(`${(state.durationMs / 1000).toFixed(1)}s`);

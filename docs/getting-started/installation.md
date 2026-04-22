@@ -14,7 +14,7 @@
     irm https://raw.githubusercontent.com/xvirobotics/metabot/main/install.ps1 | iex
     ```
 
-The installer walks you through: working directory → Claude auth → IM credentials → auto-start with PM2.
+The installer walks you through: working directory → Codex auth → IM credentials → auto-start with PM2.
 
 ## Update
 
@@ -37,15 +37,15 @@ npm run dev
 ## Prerequisites
 
 1. **Node.js 20+** is installed.
-2. **Claude Code CLI is installed and authenticated** — The Agent SDK spawns `claude` as a subprocess; it must be able to run independently.
-    - Install: `npm install -g @anthropic-ai/claude-code`
+2. **Codex CLI is installed and authenticated** — The Agent SDK spawns `codex` as a subprocess; it must be able to run independently.
+    - Install: `npm install -g @openai/codex`
     - Authenticate (one of):
-        - **OAuth login (recommended)**: Run `claude login` in a standalone terminal and complete the browser flow.
-        - **API Key**: Set `ANTHROPIC_API_KEY=sk-ant-...` in `.env` or your shell environment.
-    - Verify: Run `claude --version` and `claude "hello"` in a standalone terminal to confirm it works.
+        - **OAuth login (recommended)**: Run `codex login` in a standalone terminal and complete the browser flow.
+        - **API Key**: Set `OPENAI_API_KEY=sk-ant-...` in `.env` or your shell environment.
+    - Verify: Run `codex --version` and `codex "hello"` in a standalone terminal to confirm it works.
 
     !!! warning
-        You cannot run `claude login` or `claude auth status` from inside a Claude Code session (nested sessions are blocked). Always use a separate terminal.
+        You cannot run `codex login` or `codex auth status` from inside a Codex session (nested sessions are blocked). Always use a separate terminal.
 
 3. **IM platform configured** — See [Quick Setup](quick-setup.md) or [Feishu App Setup](feishu-app-setup.md).
 

@@ -64,7 +64,7 @@ export function ChatView() {
   const session = activeSessionId ? sessions.get(activeSessionId) : undefined;
   const messages = session?.messages || [];
 
-  // Detect if Claude is currently processing
+  // Detect if Codex is currently processing
   const isRunning = useMemo(() => {
     if (!messages.length) return false;
     const last = messages[messages.length - 1];

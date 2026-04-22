@@ -48,7 +48,7 @@ export function buildCard(state: CardState): string {
   } else if (state.status === 'thinking') {
     elements.push({
       tag: 'markdown',
-      content: '_Claude is thinking..._',
+      content: '_Codex is thinking..._',
     });
   }
 
@@ -96,7 +96,7 @@ export function buildCard(state: CardState): string {
         parts.push(`$${state.sessionCostUsd.toFixed(2)}`);
       }
       if (state.model) {
-        parts.push(state.model.replace(/^claude-/, ''));
+        parts.push(state.model.replace(/^gpt-5-codex-/, ''));
       }
       if (state.durationMs !== undefined) {
         parts.push(`${(state.durationMs / 1000).toFixed(1)}s`);
@@ -152,7 +152,7 @@ export function buildHelpCard(): string {
           '`/help` - Show this help message',
           '',
           '**Usage:**',
-          'Send any text message to start a conversation with Claude Code.',
+          'Send any text message to start a conversation with Codex.',
           'Each chat has an independent session with a fixed working directory.',
           '',
           '**Memory Commands:**',

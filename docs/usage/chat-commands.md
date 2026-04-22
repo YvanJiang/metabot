@@ -16,7 +16,7 @@ Commands you can send to MetaBot in Feishu or Telegram.
 | `/help` | Show available commands |
 | `/metaskill ...` | Generate agent teams, agents, or skills |
 | `/metabot` | Load Agent Bus docs (scheduling, bot management, cross-instance talk) |
-| `/anything` | Any unrecognized command is forwarded to Claude Code as a skill |
+| `/anything` | Any unrecognized command is forwarded to Codex as a skill |
 
 ## Notes
 

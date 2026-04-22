@@ -178,7 +178,7 @@ export function useRtcCallMode({ activeBotName, activeSessionId, token, messages
       .map((e) => `[${e.speaker === 'ai' ? 'AI' : 'User'}]: ${e.text}`)
       .join('\n');
 
-    // Notify parent to send as chat message (this triggers Claude processing via WebSocket)
+    // Notify parent to send as chat message (this triggers Codex processing via WebSocket)
     if (onTranscript && transcriptText) {
       const chatMsg = `[语音通话记录]\n\n${transcriptText}\n\n请根据以上语音对话内容，判断是否有需要执行的后续任务。如果对话中提到了具体的工作请求，请直接执行。如果只是闲聊，简单确认即可。`;
       onTranscript(chatMsg);

@@ -1,6 +1,6 @@
 # Flow: Create Agent Team
 
-You are building a complete project directory with a `.claude/` agent team configuration.
+You are building a complete project directory with a `.codex/` agent team configuration.
 
 ## IMPORTANT: Project Folder First
 
@@ -19,7 +19,7 @@ If the user's request is empty or unclear, use `AskUserQuestion` to ask the user
 <project-folder>/
 ├── CLAUDE.md                          # Orchestration hub (YOU are the tech lead)
 ├── .mcp.json                          # MCP server config
-└── .claude/
+└── .codex/
     ├── agents/
     │   ├── code-reviewer.md           # Required: quality gate
     │   ├── <specialist-1>.md
@@ -58,11 +58,11 @@ Extract: key roles, who owns what, typical workflow (e.g., design → implement 
 
 ### Search 2: GitHub Agent Configurations
 
-Search for existing Claude Code or AI agent configurations for this domain.
+Search for existing Codex or AI agent configurations for this domain.
 
 Example queries:
-- `site:github.com .claude agents [technology]`
-- `claude code [team-type] agents github`
+- `site:github.com .codex agents [technology]`
+- `codex code [team-type] agents github`
 - `CLAUDE.md [technology] site:github.com`
 
 Extract: any reusable agent definitions, patterns, or ideas.
@@ -73,7 +73,7 @@ Search for MCP (Model Context Protocol) servers relevant to the team type's tech
 
 Example queries:
 - `MCP server [technology] npm`
-- `claude MCP server [technology]`
+- `codex MCP server [technology]`
 - `model context protocol servers [domain]`
 
 Extract: server names, packages, install commands, what they provide.
@@ -120,7 +120,7 @@ Write a comprehensive `CLAUDE.md` that serves as the orchestration hub. Structur
 
 ## Agent Team
 
-**You (the main Claude session reading this CLAUDE.md) are the orchestrator / tech lead.** You analyze tasks, break them down, delegate to specialist agents, and ensure quality. You never need a separate tech-lead agent — this file IS your orchestration guide.
+**You (the main Codex session reading this CLAUDE.md) are the orchestrator / tech lead.** You analyze tasks, break them down, delegate to specialist agents, and ensure quality. You never need a separate tech-lead agent — this file IS your orchestration guide.
 
 ### Routing Table
 
@@ -201,9 +201,9 @@ mm update <doc-id> -c "New content"  # Update existing doc
 [List the skills created below with brief descriptions]
 ```
 
-### File 2: .claude/agents/ (3-5 agent files)
+### File 2: .codex/agents/ (3-5 agent files)
 
-Create each agent as `.claude/agents/<name>.md`. Note: there is NO tech-lead agent — CLAUDE.md itself serves as the orchestrator.
+Create each agent as `.codex/agents/<name>.md`. Note: there is NO tech-lead agent — CLAUDE.md itself serves as the orchestrator.
 
 **IMPORTANT: Every agent's system prompt MUST end with the Workflow Discipline section** (the same block from the CLAUDE.md template above). Copy it verbatim into each agent's system prompt after their domain-specific instructions.
 
@@ -252,9 +252,9 @@ For a game dev team:
 
 **Adapt based on your research findings.** The research should reveal which specialist roles are most valuable for this specific team type.
 
-### File 3: .claude/skills/ (2-4 skill files)
+### File 3: .codex/skills/ (2-4 skill files)
 
-Create domain-appropriate workflow skills. Each skill is `.claude/skills/<name>/SKILL.md`.
+Create domain-appropriate workflow skills. Each skill is `.codex/skills/<name>/SKILL.md`.
 
 Common patterns:
 
@@ -281,9 +281,9 @@ A skill that generates a domain-specific code review checklist.
 
 Use `!`backtick`` syntax for dynamic context in skills where appropriate (git status, branch name, recent changes, etc.).
 
-### File 4: .claude/rules/ (1-2 rule files)
+### File 4: .codex/rules/ (1-2 rule files)
 
-Create coding standard rules as `.claude/rules/<name>.md`. Rules are automatically loaded and enforced.
+Create coding standard rules as `.codex/rules/<name>.md`. Rules are automatically loaded and enforced.
 
 Base the content on research findings. Example structure:
 
@@ -352,7 +352,7 @@ Only include servers that are genuinely useful for this team type. Don't add ser
 
 ## PHASE 3: COLLECT CREDENTIALS AND FINALIZE .mcp.json
 
-**IMPORTANT: Do NOT use `claude mcp add`.** It cannot run inside a nested Claude Code session. The `.mcp.json` file was already written manually in Phase 2 (File 5) — Claude Code will auto-discover it when launched inside the project folder.
+**IMPORTANT: Do NOT use `codex mcp add`.** It cannot run inside a nested Codex session. The `.mcp.json` file was already written manually in Phase 2 (File 5) — Codex will auto-discover it when launched inside the project folder.
 
 However, some MCP servers and skills require **API keys, tokens, connection strings, or other credentials** to function. You MUST check for these and ask the user to provide them.
 
@@ -444,13 +444,13 @@ cat .mcp.json | python3 -m json.tool > /dev/null && echo "Valid JSON" || echo "I
 
 ### Files Created
 - CLAUDE.md (orchestration hub — you are the tech lead)
-- .mcp.json (MCP server config — auto-discovered by Claude Code)
-- .claude/agents/[specialist-1].md
-- .claude/agents/[specialist-2].md
-- .claude/agents/code-reviewer.md
-- .claude/skills/[skill-1]/SKILL.md
-- .claude/skills/[skill-2]/SKILL.md
-- .claude/rules/[rule-1].md
+- .mcp.json (MCP server config — auto-discovered by Codex)
+- .codex/agents/[specialist-1].md
+- .codex/agents/[specialist-2].md
+- .codex/agents/code-reviewer.md
+- .codex/skills/[skill-1]/SKILL.md
+- .codex/skills/[skill-2]/SKILL.md
+- .codex/rules/[rule-1].md
 
 ### Agent Team
 | Agent | Role | Model |
@@ -469,10 +469,10 @@ cat .mcp.json | python3 -m json.tool > /dev/null && echo "Valid JSON" || echo "I
 ### Next Steps
 1. The agent team is already registered and available in the Web UI sidebar
 2. Review CLAUDE.md and customize the routing table for your workflow
-3. Run `claude` inside the folder — agents, skills, rules, and MCP servers are all auto-discovered
+3. Run `codex` inside the folder — agents, skills, rules, and MCP servers are all auto-discovered
 4. If any credentials were skipped, edit `.mcp.json` to add them before using those MCP servers
 5. Try: "Plan and implement [a feature relevant to this project type]"
-6. Claude will automatically break it down and delegate to specialist agents
+6. Codex will automatically break it down and delegate to specialist agents
 ```
 
 ---
@@ -500,7 +500,7 @@ If it fails (e.g., no API secret configured, or the API server is not running), 
 
 1. **Always create a project folder first.** Never write files into the current working directory directly. Create a new subfolder, `cd` into it, then scaffold everything inside.
 2. **Research first, build second.** Never skip Phase 1. The research directly improves the quality of agents and skills.
-3. **NEVER use `claude mcp add`.** It cannot run inside a nested Claude Code session. Write `.mcp.json` manually — Claude Code auto-discovers it on launch.
+3. **NEVER use `codex mcp add`.** It cannot run inside a nested Codex session. Write `.mcp.json` manually — Codex auto-discovers it on launch.
 4. **Ask for credentials.** If any MCP server or skill needs API keys, tokens, or connection strings, use `AskUserQuestion` to ask the user. Always offer a "skip / configure later" option.
 5. **Every agent needs a specific description.** Vague descriptions like "general helper" are useless. Include concrete trigger scenarios.
 6. **System prompts in second person.** Always "You are...", "You should...", "Your responsibility is...".

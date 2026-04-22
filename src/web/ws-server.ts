@@ -47,7 +47,7 @@ type ServerMessage =
   | { type: 'group_deleted'; groupId: string }
   | { type: 'groups_list'; groups: ChatGroup[] }
   | { type: 'sessions_list'; botName: string; sessions: SessionRecord[] }
-  | { type: 'session_adopted'; chatId: string; sessionId: string; claudeSessionId?: string; history: SessionMessage[] }
+  | { type: 'session_adopted'; chatId: string; sessionId: string; codexSessionId?: string; history: SessionMessage[] }
   | { type: 'session_history'; sessionId: string; messages: SessionMessage[] }
   | { type: 'session_renamed'; chatId: string; title: string }
   | { type: 'session_deleted'; chatId: string }
@@ -315,19 +315,19 @@ export function setupWebSocketServer(
             sendMessage(ws, { type: 'error', chatId: msg.chatId, error: 'Session sync not available' });
             break;
           }
-          const claudeSessionId = sessionRegistry.linkChatId(msg.sessionId, msg.chatId);
-          // Set the Claude session ID in the bot's SessionManager so future messages resume the conversation
-          if (claudeSessionId) {
+          const codexSessionId = sessionRegistry.linkChatId(msg.sessionId, msg.chatId);
+          // Set the Codex session ID in the bot's SessionManager so future messages resume the conversation
+          if (codexSessionId) {
             const session = sessionRegistry.getSession(msg.sessionId);
             if (session) {
               const bot = registry.get(session.botName);
               if (bot) {
-                bot.bridge.getSessionManager().setSessionId(msg.chatId, claudeSessionId);
+                bot.bridge.getSessionManager().setSessionId(msg.chatId, codexSessionId);
               }
             }
           }
           const history = sessionRegistry.getMessages(msg.sessionId);
-          sendMessage(ws, { type: 'session_adopted', chatId: msg.chatId, sessionId: msg.sessionId, claudeSessionId, history });
+          sendMessage(ws, { type: 'session_adopted', chatId: msg.chatId, sessionId: msg.sessionId, codexSessionId, history });
           break;
         }
 

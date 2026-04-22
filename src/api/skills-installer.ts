@@ -9,8 +9,8 @@ import type { Logger } from '../utils/logger.js';
 const COMMON_SKILLS = ['metaskill', 'metamemory', 'metabot', 'phone-call', 'skill-hub'];
 
 /** Lark CLI AI Agent skills — installed via `npx skills add larksuite/cli` and
- *  symlinked into ~/.claude/skills/ automatically. We copy them to the bot
- *  working directory so they are available in the Claude Code session. */
+ *  symlinked into ~/.codex/skills/ automatically. We copy them to the bot
+ *  working directory so they are available in the Codex session. */
 const LARK_CLI_SKILLS = [
   'lark-base', 'lark-calendar', 'lark-contact', 'lark-doc', 'lark-drive',
   'lark-event', 'lark-im', 'lark-mail', 'lark-minutes', 'lark-openapi-explorer',
@@ -28,8 +28,8 @@ export interface InstallSkillsOptions {
 }
 
 export function installSkillsToWorkDir(workDir: string, logger: Logger, options?: InstallSkillsOptions): void {
-  const userSkillsDir = path.join(os.homedir(), '.claude', 'skills');
-  const destSkillsDir = path.join(workDir, '.claude', 'skills');
+  const userSkillsDir = path.join(os.homedir(), '.codex', 'skills');
+  const destSkillsDir = path.join(workDir, '.codex', 'skills');
 
   const skillNames = options?.platform === 'feishu'
     ? [...COMMON_SKILLS, ...LARK_CLI_SKILLS]
@@ -54,19 +54,19 @@ export function installSkillsToWorkDir(workDir: string, logger: Logger, options?
     ensureLarkCliConfig(options.feishuAppId, options.feishuAppSecret, logger);
   }
 
-  // Deploy workspace CLAUDE.md if not already present
-  const destClaudeMd = path.join(workDir, 'CLAUDE.md');
-  if (!fs.existsSync(destClaudeMd)) {
+  // Deploy workspace AGENTS.md if not already present
+  const destAgentsMd = path.join(workDir, 'AGENTS.md');
+  if (!fs.existsSync(destAgentsMd)) {
     const thisFile = url.fileURLToPath(import.meta.url);
     const thisDir = path.dirname(thisFile);
-    // Try src/workspace/CLAUDE.md (tsx) or dist/workspace/CLAUDE.md (compiled)
+    // Try src/workspace/AGENTS.md (tsx) or dist/workspace/AGENTS.md (compiled)
     for (const candidate of [
-      path.join(thisDir, '..', 'workspace', 'CLAUDE.md'),
-      path.join(thisDir, '..', '..', 'src', 'workspace', 'CLAUDE.md'),
+      path.join(thisDir, '..', 'workspace', 'AGENTS.md'),
+      path.join(thisDir, '..', '..', 'src', 'workspace', 'AGENTS.md'),
     ]) {
       if (fs.existsSync(candidate)) {
-        fs.copyFileSync(candidate, destClaudeMd);
-        logger.info({ dest: destClaudeMd }, 'CLAUDE.md deployed to working directory');
+        fs.copyFileSync(candidate, destAgentsMd);
+        logger.info({ dest: destAgentsMd }, 'AGENTS.md deployed to working directory');
         break;
       }
     }
@@ -114,7 +114,7 @@ export function installSkillFromHub(
   referencesTar: Buffer | undefined,
   logger: Logger,
 ): void {
-  const destDir = path.join(workDir, '.claude', 'skills', skillName);
+  const destDir = path.join(workDir, '.codex', 'skills', skillName);
   fs.mkdirSync(destDir, { recursive: true });
   fs.writeFileSync(path.join(destDir, 'SKILL.md'), skillMd, 'utf-8');
 

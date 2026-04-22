@@ -359,7 +359,7 @@ export function CallOverlayUI({ activeBotName, callElapsed, callPhase, callStatu
     <div className={styles.callOverlay}>
       <div className={styles.callContent}>
         <div className={styles.callHeader}>
-          <div className={styles.callBotName}>{activeBotName || 'Claude'}</div>
+          <div className={styles.callBotName}>{activeBotName || 'Codex'}</div>
           <div className={styles.callTimer}>{callElapsed}</div>
         </div>
 

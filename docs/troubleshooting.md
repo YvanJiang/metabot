@@ -1,19 +1,19 @@
 # Troubleshooting
 
-## "Error: Claude Code process exited with code 1"
+## "Error: Codex process exited with code 1"
 
 The bot starts but replies with this error when you message it.
 
-**Cause:** Claude CLI is not authenticated. The SDK spawns `claude` as a child process — if it has no valid credentials, it exits immediately with code 1.
+**Cause:** Codex CLI is not authenticated. The SDK spawns `codex` as a child process — if it has no valid credentials, it exits immediately with code 1.
 
-**Fix** (run in a **separate terminal**, not inside Claude Code):
+**Fix** (run in a **separate terminal**, not inside Codex):
 
 ```bash
 # Option A: OAuth login
-claude login
+codex login
 
 # Option B: API key — add to .env
-echo 'ANTHROPIC_API_KEY=sk-ant-your-key' >> /path/to/metabot/.env
+echo 'OPENAI_API_KEY=sk-ant-your-key' >> /path/to/metabot/.env
 ```
 
 Then restart the service:
@@ -24,7 +24,7 @@ metabot restart
 ```
 
 !!! warning
-    You cannot run `claude login` or `claude auth status` from inside a Claude Code session (nested sessions are blocked). Always use a separate terminal.
+    You cannot run `codex login` or `codex auth status` from inside a Codex session (nested sessions are blocked). Always use a separate terminal.
 
 ## Service Won't Connect to Feishu
 
@@ -46,8 +46,8 @@ Exception: **2-member groups** (1 user + 1 bot) are treated like DMs — no @men
 **No public IP needed?**
 :   Correct. Feishu uses WebSocket, Telegram uses long polling. No incoming ports needed.
 
-**Non-Claude models?**
-:   Yes. Any Anthropic-compatible API works (Kimi, DeepSeek, GLM, etc.). Set `ANTHROPIC_BASE_URL` and `ANTHROPIC_AUTH_TOKEN`.
+**Non-Codex models?**
+:   Anthropic-compatible providers are no longer supported after the Codex migration. Use Codex login or an OpenAI API key.
 
 **Agent communication?**
 :   Currently synchronous request-response via the Agent Bus. Agents talk to each other using `mb talk` or the `/api/talk` endpoint. Async bidirectional protocols are on the roadmap.

@@ -15,12 +15,12 @@ services:
     volumes:
       # Persist MetaMemory database
       - metabot-data:/app/data
-      # Persist Claude auth (run `claude login` inside container first)
-      - claude-config:/root/.claude
-      # Mount working directory for Claude to operate on
-      - ${CLAUDE_DEFAULT_WORKING_DIRECTORY:-.}:/workspace
+      # Persist Codex auth (run `codex login` inside container first)
+      - codex-config:/root/.codex
+      # Mount working directory for Codex to operate on
+      - ${CODEX_DEFAULT_WORKING_DIRECTORY:-.}:/workspace
     working_dir: /app
 
 volumes:
   metabot-data:
-  claude-config:
+  codex-config:

@@ -393,7 +393,7 @@ export function VoiceView() {
       {/* Instructions */}
       <div className={styles.instructions}>
         Tap the microphone to start recording. Tap again to stop and send your
-        voice message to Claude. The response will play automatically.
+        voice message to Codex. The response will play automatically.
       </div>
     </div>
   );

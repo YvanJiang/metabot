@@ -50,7 +50,7 @@ export function LoginPage() {
         </div>
 
         <p className={styles.subtitle}>
-          Connect to your Claude Code agent.
+          Connect to your Codex agent.
           <br />
           Enter your API token to get started.
         </p>
@@ -87,11 +87,11 @@ export function LoginPage() {
         <div className={styles.footer}>
           Powered by{' '}
           <a
-            href="https://github.com/anthropics/claude-code"
+            href="https://github.com/anthropics/gpt-5-codex-code"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Claude Code Agent SDK
+            Codex SDK
           </a>
         </div>
       </div>

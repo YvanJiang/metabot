@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { BotStatus, AgentMetadata } from '../../store';
+import type { BotStatus, SkillMetadata } from '../../store';
 import { useStore } from '../../store';
 import { ActivityTimeline } from './ActivityTimeline';
 import s from './AgentDetailPanel.module.css';
@@ -52,11 +52,11 @@ interface AgentDetailPanelProps {
 }
 
 export function AgentDetailPanel({ bot, agentKey, activeTab, onTabChange, onOpenChat }: AgentDetailPanelProps) {
-  // Determine if this is a sub-agent
+  // Determine if this is a skill
   const isSubAgent = agentKey.includes('/');
   const subAgentName = isSubAgent ? agentKey.split('/')[1] : null;
-  const subAgent: AgentMetadata | undefined = isSubAgent
-    ? bot.agents?.find((a) => a.name === subAgentName)
+  const subAgent: SkillMetadata | undefined = isSubAgent
+    ? bot.skills?.find((a) => a.name === subAgentName)
     : undefined;
 
   const displayName = isSubAgent ? (subAgent?.name || subAgentName || agentKey) : bot.name;
@@ -197,11 +197,11 @@ export function AgentDetailPanel({ bot, agentKey, activeTab, onTabChange, onOpen
               </>
             )}
 
-            {!isSubAgent && bot.agents && bot.agents.length > 0 && (
+            {!isSubAgent && bot.skills && bot.skills.length > 0 && (
               <div className={s.subAgentSection}>
-                <span className={s.infoLabel}>Sub-Agents ({bot.agents.length})</span>
+                <span className={s.infoLabel}>Sub-Agents ({bot.skills.length})</span>
                 <div className={s.subAgentList}>
-                  {bot.agents.map((agent) => (
+                  {bot.skills.map((agent) => (
                     <div key={agent.name} className={s.subAgentItem}>
                       <span className={s.subAgentDot} />
                       <div className={s.subAgentInfo}>

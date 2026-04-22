@@ -18,7 +18,7 @@ import type {
 
 /* ---- team status types ---- */
 
-export interface AgentMetadata {
+export interface SkillMetadata {
   name: string;
   description?: string;
   model?: string;
@@ -44,7 +44,7 @@ export interface BotStatus {
     failedTasks: number;
     totalCostUsd: number;
   };
-  agents?: AgentMetadata[];
+  skills?: SkillMetadata[];
 }
 
 export interface TeamStatus {

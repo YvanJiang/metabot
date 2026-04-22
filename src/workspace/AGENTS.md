@@ -1,6 +1,6 @@
 # MetaBot Workspace
 
-This workspace is managed by **MetaBot** — an AI assistant accessible via Feishu/Telegram that runs Claude Code with full tool access.
+This workspace is managed by **MetaBot** — an AI assistant accessible via Feishu/Telegram that runs Codex with full tool access.
 
 ## Available Skills
 
@@ -8,7 +8,7 @@ This workspace is managed by **MetaBot** — an AI assistant accessible via Feis
 Create AI agent teams, individual agents, or custom skills for any project.
 
 ```
-/metaskill ios app          → generates full .claude/ agent team
+/metaskill ios app          → generates full .codex/ agent team
 /metaskill a security agent → creates a single agent
 /metaskill a deploy skill   → creates a custom slash command
 ```

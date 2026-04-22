@@ -51,7 +51,7 @@ export interface StartRtcCallParams {
   temperature?: number;
   /** Max tokens per response (default: 256) */
   maxTokens?: number;
-  /** Claude session chatId (for post-call context injection) */
+  /** Codex session chatId (for post-call context injection) */
   chatId?: string;
   /** Bot name (for post-call context injection) */
   botName?: string;

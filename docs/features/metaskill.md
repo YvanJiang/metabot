@@ -4,7 +4,7 @@ Agent factory. Generate complete agent teams, individual agents, or custom skill
 
 ## What It Does
 
-`/metaskill` researches best practices, then generates a complete `.claude/` agent configuration:
+`/metaskill` researches best practices, then generates a complete `.codex/` agent configuration:
 
 - **Orchestrator** — Main agent that coordinates the team
 - **Specialists** — Domain-specific agents (frontend, backend, infra, etc.)
@@ -29,17 +29,17 @@ open tickets.
 
 ## How It Works
 
-1. Claude researches the project structure and best practices
-2. Generates `.claude/` configuration files (agents, skills, settings)
+1. Codex researches the project structure and best practices
+2. Generates `.codex/` configuration files (agents, skills, settings)
 3. Saves the configuration to the bot's working directory
 4. The new agents/skills are immediately available for use
 
 ## Output
 
-MetaSkill generates files in the `.claude/` directory:
+MetaSkill generates files in the `.codex/` directory:
 
 ```
-.claude/
+.codex/
 ├── agents/
 │   ├── orchestrator.md
 │   ├── frontend.md

@@ -258,9 +258,9 @@ export async function startTelegramBot(
   });
 
   botLogger.info({
-    defaultWorkingDirectory: config.claude.defaultWorkingDirectory,
-    maxTurns: config.claude.maxTurns ?? 'unlimited',
-    maxBudgetUsd: config.claude.maxBudgetUsd ?? 'unlimited',
+    defaultWorkingDirectory: config.codex.defaultWorkingDirectory,
+    maxTurns: config.codex.maxTurns ?? 'unlimited',
+    maxBudgetUsd: config.codex.maxBudgetUsd ?? 'unlimited',
   }, 'Configuration');
 
   return { name: config.name, bridge, bot, config, sender };

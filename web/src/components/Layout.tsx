@@ -575,7 +575,7 @@ export function Layout({ children }: LayoutProps) {
 
       {filteredBots.length === 0 ? (
         <div className={s.emptyAgents}>
-          {searchQuery ? 'No matches' : connected ? 'No agents configured' : 'Connecting...'}
+          {searchQuery ? 'No matches' : connected ? 'No skills configured' : 'Connecting...'}
         </div>
       ) : (
         filteredBots.map((bot) => (

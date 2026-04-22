@@ -23,7 +23,7 @@ npm run build
 npm run dev
 ```
 
-**前置条件：** Node.js 20+，Claude Code CLI 已安装并认证。
+**前置条件：** Node.js 20+，Codex CLI 已安装并认证。
 
 ## 开发命令
 

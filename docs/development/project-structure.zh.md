@@ -13,7 +13,7 @@ metabot/
 │   │   ├── message-bridge.ts       # 核心调度器
 │   │   ├── rate-limiter.ts         # 卡片更新节流
 │   │   └── outputs-manager.ts      # 输出文件生命周期
-│   ├── claude/
+│   ├── codex/
 │   │   ├── executor.ts             # Agent SDK 封装
 │   │   ├── stream-processor.ts     # SDK 消息 → 卡片状态
 │   │   └── session-manager.ts      # 会话存储
@@ -68,8 +68,8 @@ metabot/
 
 | 包 | 用途 |
 |---|------|
-| `@anthropic-ai/claude-agent-sdk` | Claude Code Agent SDK |
-| `@anthropic-ai/claude-code` | Claude Code CLI（peer 依赖） |
+| `@anthropic-ai/codex-agent-sdk` | Codex Agent SDK |
+| `@openai/codex` | Codex CLI（peer 依赖） |
 | `@larksuiteoapi/node-sdk` | 飞书 SDK |
 | `tsx` | TypeScript 执行（开发） |
 | `vitest` | 测试框架 |

@@ -13,7 +13,7 @@ export interface UserSession {
   cumulativeCostUsd: number;
   /** Cumulative duration (ms) across all queries in this session */
   cumulativeDurationMs: number;
-  /** Per-session model override (e.g. "claude-opus-4-7"). Falls back to bot default when undefined. */
+  /** Per-session model override (e.g. "gpt-5-codex"). Falls back to bot default when undefined. */
   model?: string;
 }
 

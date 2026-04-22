@@ -56,23 +56,23 @@ export async function handleSessionRoutes(
       jsonResponse(res, 400, { error: 'chatId required' });
       return true;
     }
-    const claudeSessionId = sessionRegistry.linkChatId(sessionId, chatId, platform);
-    if (claudeSessionId === undefined && !sessionRegistry.getSession(sessionId)) {
+    const codexSessionId = sessionRegistry.linkChatId(sessionId, chatId, platform);
+    if (codexSessionId === undefined && !sessionRegistry.getSession(sessionId)) {
       jsonResponse(res, 404, { error: 'Session not found' });
       return true;
     }
     // Set in SessionManager so future messages resume the conversation
-    if (claudeSessionId) {
+    if (codexSessionId) {
       const session = sessionRegistry.getSession(sessionId);
       if (session) {
         const bot = ctx.registry.get(session.botName);
         if (bot) {
-          bot.bridge.getSessionManager().setSessionId(chatId, claudeSessionId);
+          bot.bridge.getSessionManager().setSessionId(chatId, codexSessionId);
         }
       }
     }
     const history = sessionRegistry.getMessages(sessionId);
-    jsonResponse(res, 200, { sessionId, claudeSessionId, history });
+    jsonResponse(res, 200, { sessionId, codexSessionId, history });
     return true;
   }
 

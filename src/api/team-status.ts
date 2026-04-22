@@ -1,5 +1,5 @@
 import type { BotRegistry, BotInfo } from './bot-registry.js';
-import { getAgents, type AgentMetadata } from './agent-scanner.js';
+import { getSkills, type SkillMetadata } from './agent-scanner.js';
 
 export interface BotStatus extends BotInfo {
   status: 'idle' | 'busy' | 'error';
@@ -14,7 +14,7 @@ export interface BotStatus extends BotInfo {
     failedTasks: number;
     totalCostUsd: number;
   };
-  agents?: AgentMetadata[];
+  skills?: SkillMetadata[];
 }
 
 export interface TeamStatus {
@@ -59,8 +59,7 @@ export async function getTeamStatus(registry: BotRegistry): Promise<TeamStatus> 
     const costStats = bridge?.costTracker?.getStats();
     const botStats = costStats?.byBot?.[botInfo.name];
 
-    // Scan sub-agents from the bot's working directory
-    const agents = await getAgents(botInfo.workingDirectory);
+    const skills = await getSkills(botInfo.workingDirectory);
 
     bots.push({
       ...botInfo,
@@ -72,7 +71,7 @@ export async function getTeamStatus(registry: BotRegistry): Promise<TeamStatus> 
         failedTasks: botStats?.failedTasks ?? 0,
         totalCostUsd: botStats?.totalCostUsd ?? 0,
       },
-      ...(agents.length > 0 ? { agents } : {}),
+      ...(skills.length > 0 ? { skills } : {}),
     });
   }
 

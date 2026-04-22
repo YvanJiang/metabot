@@ -2,7 +2,7 @@
 
 ## Solo AI Developer
 
-Full Claude Code from your phone, bound to your project. Read, edit, run tests, commit — all from Feishu or Telegram.
+Full Codex from your phone, bound to your project. Read, edit, run tests, commit — all from Feishu or Telegram.
 
 ## Multi-Agent Team
 

@@ -30,7 +30,7 @@ export async function handleBotRoutes(
     jsonResponse(res, 200, {
       name: bot.name, description: bot.config.description, specialties: bot.config.specialties,
       icon: bot.config.icon, platform: bot.platform,
-      workingDirectory: bot.config.claude.defaultWorkingDirectory,
+      workingDirectory: bot.config.codex.defaultWorkingDirectory,
       maxConcurrentTasks: bot.config.maxConcurrentTasks, budgetLimitDaily: bot.config.budgetLimitDaily,
       stats: botStats || { totalTasks: 0, completedTasks: 0, failedTasks: 0, totalCostUsd: 0 },
     });
@@ -185,7 +185,7 @@ export async function handleBotRoutes(
 
     const running = registry.get(name);
     const runningInfo = running
-      ? { running: true, workingDirectory: running.config.claude.defaultWorkingDirectory }
+      ? { running: true, workingDirectory: running.config.codex.defaultWorkingDirectory }
       : { running: false };
 
     if (botsConfigPath) {

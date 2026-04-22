@@ -1,209 +1,144 @@
-import { describe, it, expect } from 'vitest';
-import { StreamProcessor, extractImagePaths } from '../src/claude/stream-processor.js';
-import type { SDKMessage } from '../src/claude/executor.js';
+import { describe, expect, it } from 'vitest';
+import { StreamProcessor, extractImagePaths } from '../src/codex/stream-processor.js';
+import type { SDKMessage } from '../src/codex/executor.js';
 
 function msg(overrides: Partial<SDKMessage>): SDKMessage {
-  return { type: 'system', session_id: 'sess-1', ...overrides } as SDKMessage;
+  return { type: 'turn.started', ...overrides } as SDKMessage;
 }
 
 describe('StreamProcessor', () => {
-  it('starts in thinking status', () => {
+  it('starts in thinking status and captures the thread id', () => {
     const p = new StreamProcessor('hello');
-    const state = p.processMessage(msg({ type: 'system', session_id: 'sess-1' }));
+    const state = p.processMessage(msg({ type: 'thread.started', thread_id: 'sess-1' }));
     expect(state.status).toBe('thinking');
     expect(state.userPrompt).toBe('hello');
     expect(state.responseText).toBe('');
     expect(state.toolCalls).toEqual([]);
+    expect(p.getSessionId()).toBe('sess-1');
   });
 
-  it('captures session_id from first message', () => {
+  it('tracks agent messages from completed items', () => {
     const p = new StreamProcessor('hi');
-    p.processMessage(msg({ type: 'system', session_id: 'abc-123' }));
-    expect(p.getSessionId()).toBe('abc-123');
-  });
-
-  it('accumulates text from stream_event deltas', () => {
-    const p = new StreamProcessor('hi');
-    p.processMessage(msg({
-      type: 'stream_event',
-      parent_tool_use_id: null,
-      event: { type: 'content_block_start', content_block: { type: 'text' } },
-    }));
     const state = p.processMessage(msg({
-      type: 'stream_event',
-      parent_tool_use_id: null,
-      event: { type: 'content_block_delta', delta: { type: 'text_delta', text: 'Hello world' } },
+      type: 'item.completed',
+      item: {
+        id: 'msg-1',
+        type: 'agent_message',
+        text: 'Hello world',
+      },
     }));
+
     expect(state.responseText).toBe('Hello world');
     expect(state.status).toBe('running');
   });
 
-  it('tracks tool calls from stream events', () => {
+  it('tracks command execution items as tool calls', () => {
     const p = new StreamProcessor('hi');
     const state = p.processMessage(msg({
-      type: 'stream_event',
-      parent_tool_use_id: null,
-      event: { type: 'content_block_start', content_block: { type: 'tool_use', name: 'Read' } },
+      type: 'item.started',
+      item: {
+        id: 'cmd-1',
+        type: 'command_execution',
+        command: 'npm test',
+        aggregated_output: '',
+        status: 'in_progress',
+      },
     }));
+
     expect(state.toolCalls).toHaveLength(1);
-    expect(state.toolCalls[0].name).toBe('Read');
+    expect(state.toolCalls[0].name).toBe('Bash');
     expect(state.toolCalls[0].status).toBe('running');
-    expect(state.status).toBe('running');
   });
 
-  it('ignores subagent stream events', () => {
+  it('marks tools as done when command execution completes', () => {
     const p = new StreamProcessor('hi');
-    const state = p.processMessage(msg({
-      type: 'stream_event',
-      parent_tool_use_id: 'tool-123',
-      event: { type: 'content_block_delta', delta: { type: 'text_delta', text: 'subagent text' } },
+    p.processMessage(msg({
+      type: 'item.started',
+      item: {
+        id: 'cmd-1',
+        type: 'command_execution',
+        command: 'npm test',
+        aggregated_output: '',
+        status: 'in_progress',
+      },
     }));
-    expect(state.responseText).toBe('');
+    const state = p.processMessage(msg({
+      type: 'item.completed',
+      item: {
+        id: 'cmd-1',
+        type: 'command_execution',
+        command: 'npm test',
+        aggregated_output: 'ok',
+        exit_code: 0,
+        status: 'completed',
+      },
+    }));
+
+    expect(state.toolCalls[0].status).toBe('done');
   });
 
-  it('processes result message as complete', () => {
+  it('tracks file changes, image outputs, and plan paths', () => {
     const p = new StreamProcessor('hi');
+    p.processMessage(msg({
+      type: 'item.completed',
+      item: {
+        id: 'patch-1',
+        type: 'file_change',
+        status: 'completed',
+        changes: [
+          { path: '/tmp/output.png', kind: 'add' },
+          { path: '/tmp/project/.codex/plans/plan.md', kind: 'update' },
+        ],
+      },
+    }));
+
+    expect(p.getImagePaths()).toEqual(['/tmp/output.png']);
+    expect(p.getPlanFilePath()).toBe('/tmp/project/.codex/plans/plan.md');
+  });
+
+  it('processes turn.completed as complete and records usage', () => {
+    const p = new StreamProcessor('hi');
+    p.processMessage(msg({
+      type: 'item.completed',
+      item: {
+        id: 'msg-1',
+        type: 'agent_message',
+        text: 'Done!',
+      },
+    }));
+
     const state = p.processMessage(msg({
-      type: 'result',
-      subtype: 'success',
-      result: 'Done!',
-      total_cost_usd: 0.05,
+      type: 'turn.completed',
       duration_ms: 1200,
+      usage: {
+        input_tokens: 100,
+        cached_input_tokens: 20,
+        output_tokens: 40,
+      },
     }));
+
     expect(state.status).toBe('complete');
     expect(state.responseText).toBe('Done!');
-    expect(state.costUsd).toBe(0.05);
     expect(state.durationMs).toBe(1200);
+    expect(state.totalTokens).toBe(160);
   });
 
-  it('processes error result message', () => {
+  it('processes turn.failed as error', () => {
     const p = new StreamProcessor('hi');
     const state = p.processMessage(msg({
-      type: 'result',
-      subtype: 'error',
-      result: '',
-      errors: ['Something failed', 'Another error'],
-      total_cost_usd: 0.01,
+      type: 'turn.failed',
       duration_ms: 500,
+      error: { message: 'Something failed' },
     }));
+
     expect(state.status).toBe('error');
-    expect(state.errorMessage).toBe('Something failed; Another error');
+    expect(state.errorMessage).toBe('Something failed');
   });
 
-  it('detects AskUserQuestion and sets waiting_for_input', () => {
+  it('returns null for pending questions because Codex stream has no structured ask-user event', () => {
     const p = new StreamProcessor('hi');
-    const state = p.processMessage(msg({
-      type: 'assistant',
-      parent_tool_use_id: null,
-      message: {
-        content: [{
-          type: 'tool_use',
-          id: 'tool-q1',
-          name: 'AskUserQuestion',
-          input: {
-            questions: [{
-              question: 'Which option?',
-              header: 'Choice',
-              options: [
-                { label: 'A', description: 'Option A' },
-                { label: 'B', description: 'Option B' },
-              ],
-              multiSelect: false,
-            }],
-          },
-        }],
-      },
-    }));
-    expect(state.status).toBe('waiting_for_input');
-    expect(state.pendingQuestion).toBeDefined();
-    expect(state.pendingQuestion!.toolUseId).toBe('tool-q1');
-    expect(state.pendingQuestion!.questions[0].question).toBe('Which option?');
-  });
-
-  it('tracks Write tool image paths', () => {
-    const p = new StreamProcessor('hi');
-    p.processMessage(msg({
-      type: 'assistant',
-      parent_tool_use_id: null,
-      message: {
-        content: [{
-          type: 'tool_use',
-          name: 'Write',
-          input: { file_path: '/tmp/output.png' },
-        }],
-      },
-    }));
-    expect(p.getImagePaths()).toEqual(['/tmp/output.png']);
-  });
-
-  it('does not track non-image Write paths', () => {
-    const p = new StreamProcessor('hi');
-    p.processMessage(msg({
-      type: 'assistant',
-      parent_tool_use_id: null,
-      message: {
-        content: [{
-          type: 'tool_use',
-          name: 'Write',
-          input: { file_path: '/tmp/output.txt' },
-        }],
-      },
-    }));
-    expect(p.getImagePaths()).toEqual([]);
-  });
-
-  it('detects ExitPlanMode as SDK-handled tool', () => {
-    const p = new StreamProcessor('hi');
-    p.processMessage(msg({
-      type: 'assistant',
-      parent_tool_use_id: null,
-      message: {
-        content: [{
-          type: 'tool_use',
-          id: 'tool-plan1',
-          name: 'ExitPlanMode',
-          input: {},
-        }],
-      },
-    }));
-    const tools = p.drainSdkHandledTools();
-    expect(tools).toHaveLength(1);
-    expect(tools[0].toolUseId).toBe('tool-plan1');
-    expect(tools[0].name).toBe('ExitPlanMode');
-    // Second drain should be empty
-    expect(p.drainSdkHandledTools()).toHaveLength(0);
-  });
-
-  it('does not detect ExitPlanMode from subagent', () => {
-    const p = new StreamProcessor('hi');
-    p.processMessage(msg({
-      type: 'assistant',
-      parent_tool_use_id: 'parent-123',
-      message: {
-        content: [{
-          type: 'tool_use',
-          id: 'tool-plan2',
-          name: 'ExitPlanMode',
-          input: {},
-        }],
-      },
-    }));
-    expect(p.drainSdkHandledTools()).toHaveLength(0);
-  });
-
-  it('marks all tools as done on result', () => {
-    const p = new StreamProcessor('hi');
-    p.processMessage(msg({
-      type: 'stream_event',
-      parent_tool_use_id: null,
-      event: { type: 'content_block_start', content_block: { type: 'tool_use', name: 'Bash' } },
-    }));
-    const state = p.processMessage(msg({
-      type: 'result',
-      subtype: 'success',
-      result: 'ok',
-    }));
-    expect(state.toolCalls.every(t => t.status === 'done')).toBe(true);
+    expect(p.getPendingQuestion()).toBeNull();
+    expect(p.drainSdkHandledTools()).toEqual([]);
   });
 });
 

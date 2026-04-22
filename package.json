@@ -1,7 +1,7 @@
 {
   "name": "metabot",
   "version": "1.0.0",
-  "description": "MetaBot — Bridge service connecting IM bots (Feishu/Lark, Telegram) to Claude Code Agent SDK",
+  "description": "MetaBot — Bridge service connecting IM bots (Feishu/Lark, Telegram) to OpenAI Codex",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
@@ -18,8 +18,8 @@
     "update-cli": "for cli in mb mm metabot; do [ -f bin/$cli ] && cp bin/$cli ~/.local/bin/$cli && chmod +x ~/.local/bin/$cli && echo \"Updated: $cli\"; done"
   },
   "dependencies": {
-    "@anthropic-ai/claude-agent-sdk": "^0.2.112",
-    "@anthropic-ai/sdk": "^0.78.0",
+    "@openai/codex": "^0.122.0",
+    "@openai/codex-sdk": "^0.122.0",
     "@larksuiteoapi/node-sdk": "^1.58.0",
     "@types/ws": "^8.18.0",
     "@volcengine/openapi": "^1.36.0",

@@ -26,11 +26,11 @@ FROM node:20-slim
 
 WORKDIR /app
 
-# Install runtime deps for better-sqlite3 and Claude CLI
+# Install runtime deps for better-sqlite3 and Codex CLI
 RUN apt-get update && apt-get install -y python3 make g++ git curl && rm -rf /var/lib/apt/lists/*
 
-# Install Claude Code CLI
-RUN npm install -g @anthropic-ai/claude-code
+# Install Codex CLI
+RUN npm install -g @openai/codex
 
 # Install production dependencies (rebuilds native modules for this stage)
 COPY package.json package-lock.json ./

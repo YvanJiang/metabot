@@ -84,7 +84,7 @@ export function TeamWorkspace() {
     return bots.find((b) => b.name === botName);
   }, [selectedAgentKey, bots]);
 
-  const totalAgents = useMemo(() => bots.reduce((sum, b) => sum + (b.agents?.length || 0), 0), [bots]);
+  const totalAgents = useMemo(() => bots.reduce((sum, b) => sum + (b.skills?.length || 0), 0), [bots]);
 
   const handleOpenChat = useCallback((botName: string) => {
     setTeamChatBotName(botName);
@@ -142,7 +142,7 @@ export function TeamWorkspace() {
           </span>
           <span className={s.statDivider} />
           <span className={s.statChip}>
-            <span className={s.statNum}>{totalAgents}</span> Sub-agents
+            <span className={s.statNum}>{totalAgents}</span> Sub-skills
           </span>
           <span className={s.statDivider} />
           {(summary?.busyBots || 0) > 0 && (

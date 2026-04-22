@@ -13,7 +13,7 @@ import type { Logger } from '../utils/logger.js';
 export interface SessionRecord {
   id: string;
   botName: string;
-  claudeSessionId?: string;
+  codexSessionId?: string;
   workingDirectory: string;
   title: string;
   platform: string;
@@ -54,11 +54,16 @@ export class SessionRegistry {
   }
 
   private initSchema(): void {
+    const sessionColumns = this.db.prepare('PRAGMA table_info(sessions)').all() as Array<{ name: string }>;
+    if (sessionColumns.some((column) => column.name === 'claude_session_id') && !sessionColumns.some((column) => column.name === 'codex_session_id')) {
+      this.db.exec('ALTER TABLE sessions RENAME COLUMN claude_session_id TO codex_session_id');
+    }
+
     this.db.exec(`
       CREATE TABLE IF NOT EXISTS sessions (
         id TEXT PRIMARY KEY,
         bot_name TEXT NOT NULL,
-        claude_session_id TEXT,
+        codex_session_id TEXT,
         working_directory TEXT NOT NULL,
         title TEXT NOT NULL DEFAULT '',
         platform TEXT NOT NULL,
@@ -111,14 +116,14 @@ export class SessionRegistry {
   createOrUpdate(opts: {
     chatId: string;
     botName: string;
-    claudeSessionId?: string;
+    codexSessionId?: string;
     workingDirectory: string;
     prompt: string;
     responseText?: string;
     costUsd?: number;
     durationMs?: number;
   }): string {
-    const { chatId, botName, claudeSessionId, workingDirectory, prompt, responseText, costUsd, durationMs } = opts;
+    const { chatId, botName, codexSessionId, workingDirectory, prompt, responseText, costUsd, durationMs } = opts;
     const platform = SessionRegistry.detectPlatform(chatId);
     const now = Date.now();
 
@@ -130,9 +135,9 @@ export class SessionRegistry {
       const updates: string[] = ['updated_at = ?'];
       const params: any[] = [now];
 
-      if (claudeSessionId) {
-        updates.push('claude_session_id = ?');
-        params.push(claudeSessionId);
+      if (codexSessionId) {
+        updates.push('codex_session_id = ?');
+        params.push(codexSessionId);
       }
 
       params.push(chatId);
@@ -141,26 +146,26 @@ export class SessionRegistry {
       // Also check session_links for linked chatIds
       const linkRow = this.db.prepare('SELECT session_id FROM session_links WHERE chat_id = ?').get(chatId) as any;
       if (linkRow) {
-        this.db.prepare('UPDATE sessions SET updated_at = ?, claude_session_id = COALESCE(?, claude_session_id) WHERE id = ?')
-          .run(now, claudeSessionId || null, linkRow.session_id);
+        this.db.prepare('UPDATE sessions SET updated_at = ?, codex_session_id = COALESCE(?, codex_session_id) WHERE id = ?')
+          .run(now, codexSessionId || null, linkRow.session_id);
         session = this.getSession(linkRow.session_id)!;
       }
     } else {
       // Check if this chatId is a linked chatId
       const linkRow = this.db.prepare('SELECT session_id FROM session_links WHERE chat_id = ?').get(chatId) as any;
       if (linkRow) {
-        this.db.prepare('UPDATE sessions SET updated_at = ?, claude_session_id = COALESCE(?, claude_session_id) WHERE id = ?')
-          .run(now, claudeSessionId || null, linkRow.session_id);
+        this.db.prepare('UPDATE sessions SET updated_at = ?, codex_session_id = COALESCE(?, codex_session_id) WHERE id = ?')
+          .run(now, codexSessionId || null, linkRow.session_id);
         session = this.getSession(linkRow.session_id)!;
       } else {
         // Create new session
         const id = crypto.randomUUID();
         const title = prompt.slice(0, 60).replace(/\n/g, ' ');
         this.db.prepare(`
-          INSERT INTO sessions (id, bot_name, claude_session_id, working_directory, title, platform, chat_id, created_at, updated_at)
+          INSERT INTO sessions (id, bot_name, codex_session_id, working_directory, title, platform, chat_id, created_at, updated_at)
           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `).run(id, botName, claudeSessionId || null, workingDirectory, title, platform, chatId, now, now);
-        session = { id, botName, claudeSessionId, workingDirectory, title, platform, chatId, createdAt: now, updatedAt: now };
+        `).run(id, botName, codexSessionId || null, workingDirectory, title, platform, chatId, now, now);
+        session = { id, botName, codexSessionId, workingDirectory, title, platform, chatId, createdAt: now, updatedAt: now };
       }
     }
 
@@ -268,7 +273,7 @@ export class SessionRegistry {
 
   /**
    * Link a new chatId to an existing session.
-   * Returns the Claude session ID so the caller can set it in SessionManager.
+   * Returns the Codex session ID so the caller can set it in SessionManager.
    */
   linkChatId(sessionId: string, chatId: string, platform?: string): string | undefined {
     const session = this.getSession(sessionId);
@@ -285,7 +290,7 @@ export class SessionRegistry {
     this.db.prepare('UPDATE sessions SET updated_at = ? WHERE id = ?').run(now, sessionId);
 
     this.logger.info({ sessionId, chatId, platform: resolvedPlatform }, 'Session linked to new chatId');
-    return session.claudeSessionId;
+    return session.codexSessionId;
   }
 
   /** Rename a session. */
@@ -311,7 +316,7 @@ export class SessionRegistry {
     return {
       id: row.id,
       botName: row.bot_name,
-      claudeSessionId: row.claude_session_id || undefined,
+      codexSessionId: row.codex_session_id || undefined,
       workingDirectory: row.working_directory,
       title: row.title,
       platform: row.platform,

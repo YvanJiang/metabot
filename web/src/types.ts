@@ -51,7 +51,7 @@ export interface FileAttachment {
   type: string;   // MIME type
   size: number;
   url: string;     // /api/files/chatId/filename — for browser preview
-  path: string;    // server absolute path — for Claude to read
+  path: string;    // server absolute path — for Codex to read
 }
 
 export interface ChatMessage {

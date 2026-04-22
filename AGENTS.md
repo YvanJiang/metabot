@@ -1,10 +1,10 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
 ## Project Overview
 
-MetaBot — A bridge service that connects IM bots (Feishu/Lark) to the Claude Code Agent SDK. Users chat with Claude Code from Feishu (including mobile), with real-time streaming updates via interactive cards. Runs Claude in `bypassPermissions` mode since there's no terminal for interactive approval.
+MetaBot — A bridge service that connects IM bots (Feishu/Lark) to the Codex Agent SDK. Users chat with Codex from Feishu (including mobile), with real-time streaming updates via interactive cards. Runs Codex in `bypassPermissions` mode since there's no terminal for interactive approval.
 
 ## Commands
 
@@ -23,7 +23,7 @@ npm run format       # Prettier format
 
 ## Architecture
 
-The app is a TypeScript ESM project (`"type": "module"`, all imports use `.js` extensions). It connects to Feishu via WebSocket (long connection, no public IP needed) and calls Claude via the `@anthropic-ai/claude-agent-sdk`.
+The app is a TypeScript ESM project (`"type": "module"`, all imports use `.js` extensions). It connects to Feishu via WebSocket (long connection, no public IP needed) and calls Codex via the `@anthropic-ai/Codex-agent-sdk`.
 
 ### Message Flow
 
@@ -37,12 +37,12 @@ Web Browser → WebSocket (/ws) → ws-server.ts → MessageBridge.executeApiTas
 - **`src/index.ts`** — Entrypoint. Creates Feishu WS client, fetches bot info for @mention detection, wires up the event dispatcher and bridge, handles graceful shutdown.
 - **`src/config.ts`** — Loads config. `BotConfig` is the per-bot type; `AppConfig` wraps `{ bots, log }`. `loadAppConfig()` reads `BOTS_CONFIG` JSON file or falls back to single-bot mode from env vars.
 - **`src/feishu/event-handler.ts`** — Registers `im.message.receive_v1` on the Lark `EventDispatcher`. Handles text/image parsing, @mention stripping, group chat filtering (only responds when @mentioned, except in 2-member groups which are treated like DMs). Exports `IncomingMessage` type.
-- **`src/bridge/message-bridge.ts`** — Core orchestrator. Routes commands (`/reset`, `/stop`, `/status`, `/help`, `/memory`), manages running tasks per chat (one task at a time per `chatId`), executes Claude queries with streaming card updates, handles image input/output, enforces 1-hour timeout.
-- **`src/memory/memory-client.ts`** — Lightweight HTTP client for the MetaMemory server. Used by `/memory` commands (list, search, status) for quick Feishu responses without spawning Claude.
-- **`src/claude/executor.ts`** — Wraps `query()` from the Agent SDK as an async generator yielding `SDKMessage`. Configures permissionMode, allowedTools, MCP settings, session resume.
-- **`src/claude/stream-processor.ts`** — Transforms the raw SDK message stream into `CardState` objects for display. Tracks tool calls, response text, session ID, cost/duration. Also extracts image file paths and plan file paths from tool outputs.
+- **`src/bridge/message-bridge.ts`** — Core orchestrator. Routes commands (`/reset`, `/stop`, `/status`, `/help`, `/memory`), manages running tasks per chat (one task at a time per `chatId`), executes Codex queries with streaming card updates, handles image input/output, enforces 1-hour timeout.
+- **`src/memory/memory-client.ts`** — Lightweight HTTP client for the MetaMemory server. Used by `/memory` commands (list, search, status) for quick Feishu responses without spawning Codex.
+- **`src/Codex/executor.ts`** — Wraps `query()` from the Agent SDK as an async generator yielding `SDKMessage`. Configures permissionMode, allowedTools, MCP settings, session resume.
+- **`src/Codex/stream-processor.ts`** — Transforms the raw SDK message stream into `CardState` objects for display. Tracks tool calls, response text, session ID, cost/duration. Also extracts image file paths and plan file paths from tool outputs.
 - **`src/feishu/doc-reader.ts`** — Reads Feishu documents (docx/wiki) and converts Feishu blocks back to Markdown. Reverse of `markdown-to-blocks.ts`. Used by the `lark-doc` skill.
-- **`src/claude/session-manager.ts`** — In-memory sessions keyed by `chatId`. Each session has a fixed working directory (from bot config) and Claude session ID. Sessions expire after 24 hours.
+- **`src/Codex/session-manager.ts`** — In-memory sessions keyed by `chatId`. Each session has a fixed working directory (from bot config) and Codex session ID. Sessions expire after 24 hours.
 - **`src/feishu/card-builder.ts`** — Builds Feishu interactive card JSON. Cards have color-coded headers (blue=thinking/running, green=complete, red=error), tool call lists, markdown response content, and stats (cost/duration). Content truncated at 28KB.
 - **`src/feishu/message-sender.ts`** — Feishu API wrapper for sending/updating cards, uploading/downloading images, sending text.
 - **`src/bridge/rate-limiter.ts`** — Throttles card updates to avoid Feishu API rate limits (default 1.5s interval). Keeps only the latest pending update.
@@ -51,10 +51,10 @@ Web Browser → WebSocket (/ws) → ws-server.ts → MessageBridge.executeApiTas
 
 ### Outputs Directory Pattern
 
-When Claude produces output files (images, PDFs, documents, etc.), they are automatically sent to the user in Feishu:
+When Codex produces output files (images, PDFs, documents, etc.), they are automatically sent to the user in Feishu:
 
 1. **Per-chat outputs directory** — Before each execution, a fresh directory is created at `/tmp/metabot-outputs/<chatId>/`.
-2. **System prompt injection** — Claude is told about the directory via `systemPrompt.append`, instructing it to `cp` output files there.
+2. **System prompt injection** — Codex is told about the directory via `systemPrompt.append`, instructing it to `cp` output files there.
 3. **Post-execution scan** — After execution completes, the bridge scans the directory and sends all files found.
 4. **File type routing** — Images (png/jpg/gif/etc.) are sent via `im.v1.image.create`, other files (pdf/docx/zip/etc.) via `im.v1.file.create`.
 5. **Size limits** — Images up to 10MB, other files up to 30MB (Feishu API limits).
@@ -108,11 +108,11 @@ Read Feishu documents (standalone docx and wiki pages) and convert them to Markd
 
 **Key module:** `src/api/voice-handler.ts` — Doubao/Whisper transcription, agent execution via `bridge.executeApiTask()`, Doubao/OpenAI/ElevenLabs TTS.
 
-**Environment:** `VOLCENGINE_TTS_APPID` + `VOLCENGINE_TTS_ACCESS_KEY` (for Doubao STT + TTS, recommended), `OPENAI_API_KEY` (fallback for Whisper STT + OpenAI TTS), `ELEVENLABS_API_KEY` (optional for ElevenLabs TTS), `VOICE_MODEL` (optional, override Claude model for voice mode).
+**Environment:** `VOLCENGINE_TTS_APPID` + `VOLCENGINE_TTS_ACCESS_KEY` (for Doubao STT + TTS, recommended), `OPENAI_API_KEY` (fallback for Whisper STT + OpenAI TTS), `ELEVENLABS_API_KEY` (optional for ElevenLabs TTS), `VOICE_MODEL` (optional, override Codex model for voice mode).
 
 ### Plan Mode Display
 
-When Claude enters plan mode and writes a plan to `.claude/plans/*.md`, the plan content is automatically sent to the Feishu user as a separate card message when `ExitPlanMode` is triggered. This is handled by `StreamProcessor` tracking plan file paths and `MessageBridge.sendPlanContent()` reading and sending the file.
+When Codex enters plan mode and writes a plan to `.Codex/plans/*.md`, the plan content is automatically sent to the Feishu user as a separate card message when `ExitPlanMode` is triggered. This is handled by `StreamProcessor` tracking plan file paths and `MessageBridge.sendPlanContent()` reading and sending the file.
 
 ### Skill Hub (Cross-Bot Skill Sharing)
 
@@ -123,7 +123,7 @@ A centralized skill registry that allows bots to publish, discover, and install 
 **Key modules:**
 - **`src/api/skill-hub-store.ts`** — `SkillHubStore` class with SQLite backend. FTS5 full-text search across name, description, tags, and content. Methods: `publish()` (upsert, bumps version), `get()`, `list()`, `search()`, `remove()`, `getContent()`.
 - **`src/api/routes/skill-hub-routes.ts`** — REST API endpoints for skill CRUD, publish-from-bot, install, and search.
-- **`src/api/skills-installer.ts`** — `installSkillFromHub()` writes SKILL.md + extracts references tar to a bot's `.claude/skills/` directory.
+- **`src/api/skills-installer.ts`** — `installSkillFromHub()` writes SKILL.md + extracts references tar to a bot's `.Codex/skills/` directory.
 - **`src/skills/skill-hub/SKILL.md`** — Bot-facing skill for autonomous skill discovery and installation.
 
 **API endpoints:**
@@ -187,9 +187,9 @@ Set `BOTS_CONFIG=./bots.json` (or any path) to run multiple Feishu bots in a sin
 Per-bot config fields (JSON array entries):
 - **`name`** (required) — Bot identifier, used in log context
 - **`feishuAppId`** / **`feishuAppSecret`** (required) — Feishu app credentials
-- **`defaultWorkingDirectory`** (required) — Fixed working directory for Claude sessions
-- **`allowedTools`** — Claude tools whitelist (defaults to env var or `Read,Edit,Write,Glob,Grep,Bash`)
-- **`maxTurns`** / **`maxBudgetUsd`** / **`model`** — Claude execution limits (defaults from env vars)
+- **`defaultWorkingDirectory`** (required) — Fixed working directory for Codex sessions
+- **`allowedTools`** — Codex tools whitelist (defaults to env var or `Read,Edit,Write,Glob,Grep,Bash`)
+- **`maxTurns`** / **`maxBudgetUsd`** / **`model`** — Codex execution limits (defaults from env vars)
 - **`outputsBaseDir`** — Base directory for output files
 
 When `BOTS_CONFIG` is set, `FEISHU_APP_ID` / `FEISHU_APP_SECRET` env vars are ignored. Other env vars (`CLAUDE_MAX_TURNS`, `LOG_LEVEL`, etc.) still serve as defaults for any bot field not specified in JSON.
@@ -201,8 +201,8 @@ Sessions are isolated per `chatId` with no collision between bots since each bot
 Knowledge persistence is handled by an external **MetaMemory server** (FastAPI + SQLite). The server stores documents as Markdown in a folder tree with full-text search (FTS5).
 
 - **Server URL**: Configured via `META_MEMORY_URL` env var (default: `http://localhost:8100`)
-- **Claude Code Skill**: Claude autonomously reads/writes memory documents via the `metamemory` skill (installed at `~/.claude/skills/metamemory/SKILL.md`). When users say "remember this" or Claude wants to persist knowledge, it calls the memory API via curl.
-- **Feishu commands**: `/memory list`, `/memory search <query>`, `/memory status` — quick queries via `MemoryClient` without spawning Claude.
+- **Codex Skill**: Codex autonomously reads/writes memory documents via the `metamemory` skill (installed at `~/.Codex/skills/metamemory/SKILL.md`). When users say "remember this" or Codex wants to persist knowledge, it calls the memory API via curl.
+- **Feishu commands**: `/memory list`, `/memory search <query>`, `/memory status` — quick queries via `MemoryClient` without spawning Codex.
 - **Web UI**: Browse documents at `http://localhost:8100` — folder tree, markdown rendering, search.
 - **Server repo**: `xvirobotics/metamemory` — independent project with Docker deployment.
 
@@ -211,13 +211,13 @@ Knowledge persistence is handled by an external **MetaMemory server** (FastAPI +
 Before running the service, ensure:
 
 1. **Node.js 20+** is installed.
-2. **Claude Code CLI is installed and authenticated** — The Agent SDK spawns `claude` as a subprocess; it must be able to run independently.
-   - Install: `npm install -g @anthropic-ai/claude-code`
+2. **Codex CLI is installed and authenticated** — The Agent SDK spawns `Codex` as a subprocess; it must be able to run independently.
+   - Install: `npm install -g @anthropic-ai/Codex`
    - Authenticate (one of):
-     - **OAuth login (recommended)**: Run `claude login` in a standalone terminal and complete the browser flow.
+     - **OAuth login (recommended)**: Run `Codex login` in a standalone terminal and complete the browser flow.
      - **API Key**: Set `ANTHROPIC_API_KEY=sk-ant-...` in `.env` or your shell environment.
-   - Verify: Run `claude --version` and `claude "hello"` in a standalone terminal to confirm it works.
-   - **Important**: You cannot run `claude login` or `claude auth status` from inside a Claude Code session (nested sessions are blocked). Always use a separate terminal.
+   - Verify: Run `Codex --version` and `Codex "hello"` in a standalone terminal to confirm it works.
+   - **Important**: You cannot run `Codex login` or `Codex auth status` from inside a Codex session (nested sessions are blocked). Always use a separate terminal.
 3. **Feishu app is configured** — See the setup guide below.
 
 ## HTTPS Setup (Required for Web Voice Mode)
@@ -264,8 +264,8 @@ This is the step-by-step procedure to configure a Feishu bot for this bridge ser
 1. Go to **飞书开放平台开发者控制台**: https://open.feishu.cn/app
 2. Click **"Create Custom App"**
 3. Fill in:
-   - **Name**: e.g. "Claude Code"
-   - **Description**: e.g. "Feishu to Claude Code bridge bot"
+   - **Name**: e.g. "Codex"
+   - **Description**: e.g. "Feishu to Codex bridge bot"
    - **Icon**: Pick any icon and color
 4. Click **Create**
 
@@ -320,23 +320,23 @@ This is the step-by-step procedure to configure a Feishu bot for this bridge ser
 ### Step 7: Test
 
 1. Open Feishu Messenger
-2. Search for your bot name (e.g. "Claude Code")
+2. Search for your bot name (e.g. "Codex")
 3. Send a test message
-4. The bot should respond with a streaming card showing Claude's response
+4. The bot should respond with a streaming card showing Codex's response
 
 ## Troubleshooting
 
-### "Error: Claude Code process exited with code 1"
+### "Error: Codex process exited with code 1"
 
-The bot starts but replies with this error when you message it. This means the Agent SDK's subprocess (`claude`) failed to launch properly.
+The bot starts but replies with this error when you message it. This means the Agent SDK's subprocess (`Codex`) failed to launch properly.
 
-**Cause**: Claude CLI is not authenticated. The SDK spawns `claude` as a child process — if it has no valid credentials, it exits immediately with code 1.
+**Cause**: Codex CLI is not authenticated. The SDK spawns `Codex` as a child process — if it has no valid credentials, it exits immediately with code 1.
 
-**Fix** (run in a **separate terminal**, not inside Claude Code):
+**Fix** (run in a **separate terminal**, not inside Codex):
 
 ```bash
 # Option A: OAuth login
-claude login
+Codex login
 
 # Option B: API key — add to .env
 echo 'ANTHROPIC_API_KEY=sk-ant-your-key' >> /path/to/metabot/.env
@@ -376,7 +376,7 @@ Always develop on the `dev` branch (or feature branches created from `dev`). Nev
 When implementing a feature or fixing a bug, follow this end-to-end workflow unless the user says otherwise:
 
 1. **Build & Test** — Run `npm run build`, `npm test`, `npm run lint` and fix any failures before proceeding.
-2. **Update docs** — Update README.md, README_zh.md, and CLAUDE.md if the change affects user-facing behavior, API surface, CLI commands, or architecture.
+2. **Update docs** — Update README.md, README_zh.md, and AGENTS.md if the change affects user-facing behavior, API surface, CLI commands, or architecture.
 3. **Commit** — Create a descriptive commit on the current branch.
 4. **Push & PR** — Push the branch and create a PR to `main` via `gh pr create`.
 5. **CI** — Wait for CI checks to pass (check with `gh pr checks`). Fix any failures.

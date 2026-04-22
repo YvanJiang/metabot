@@ -56,7 +56,7 @@ export async function handleSkillHubRoutes(
       return true;
     }
 
-    const skillDir = path.join(bot.config.claude.defaultWorkingDirectory, '.claude', 'skills', skillName);
+    const skillDir = path.join(bot.config.codex.defaultWorkingDirectory, '.codex', 'skills', skillName);
     const skillMdPath = path.join(skillDir, 'SKILL.md');
     if (!fs.existsSync(skillMdPath)) {
       jsonResponse(res, 404, { error: `Skill not found at ${skillMdPath}` });
@@ -128,7 +128,7 @@ export async function handleSkillHubRoutes(
       referencesTar = content.referencesTar;
     }
 
-    const workDir = bot.config.claude.defaultWorkingDirectory;
+    const workDir = bot.config.codex.defaultWorkingDirectory;
     installSkillFromHub(workDir, skillName, skillMd, referencesTar, logger);
     jsonResponse(res, 200, { installed: true, botName, skillName });
     return true;

@@ -1,6 +1,6 @@
 # Architecture
 
-MetaBot is a TypeScript ESM project that connects IM platforms (Feishu, Telegram) to the Claude Code Agent SDK.
+MetaBot is a TypeScript ESM project that connects IM platforms (Feishu, Telegram) to the Codex Agent SDK.
 
 ## System Overview
 
@@ -15,7 +15,7 @@ MetaBot is a TypeScript ESM project that connects IM platforms (Feishu, Telegram
 │  └────┬─────┘ └─────┬─────┘ └────┬─────┘ └─────┬─────┘  │
 │       └──────────────┴────────────┴─────────────┘        │
 │                       ↕                                  │
-│            Claude Code Agent SDK                         │
+│            Codex Agent SDK                         │
 │         (bypassPermissions, streaming)                   │
 │                       ↕                                  │
 │             HTTP API (:9100) — Agent Bus                 │
@@ -60,9 +60,9 @@ Web Browser → WebSocket (/ws?token=API_SECRET)
 | `src/config.ts` | Loads config from `bots.json` or env vars. |
 | `src/feishu/event-handler.ts` | Parses Feishu events, filters @mentions, handles text/image. |
 | `src/bridge/message-bridge.ts` | Core orchestrator. Routes commands, manages tasks per chat, executes Claude queries with streaming. |
-| `src/claude/executor.ts` | Wraps `query()` from the Agent SDK as an async generator. |
-| `src/claude/stream-processor.ts` | Transforms SDK messages into card state objects for display. |
-| `src/claude/session-manager.ts` | In-memory sessions keyed by `chatId`. 24-hour expiry. |
+| `src/codex/executor.ts` | Wraps `query()` from the Agent SDK as an async generator. |
+| `src/codex/stream-processor.ts` | Transforms SDK messages into card state objects for display. |
+| `src/codex/session-manager.ts` | In-memory sessions keyed by `chatId`. 24-hour expiry. |
 | `src/feishu/card-builder.ts` | Builds Feishu interactive card JSON with color-coded headers. |
 | `src/feishu/message-sender.ts` | Feishu API wrapper for sending/updating cards, uploading images. |
 | `src/bridge/rate-limiter.ts` | Throttles card updates (1.5s default) to avoid API rate limits. |

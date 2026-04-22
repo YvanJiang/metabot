@@ -1,6 +1,6 @@
 # WeChat Integration
 
-MetaBot supports WeChat personal accounts via the ClawBot plugin (iLink Bot API), allowing you to chat with Claude Code agents directly in WeChat.
+MetaBot supports WeChat personal accounts via the ClawBot plugin (iLink Bot API), allowing you to chat with Codex agents directly in WeChat.
 
 !!! info "Gray Testing"
     WeChat ClawBot is currently in gray testing. Requires iPhone WeChat 8.0.70+. Android support coming soon.
@@ -89,12 +89,12 @@ Send a message to ClawBot in WeChat — MetaBot handles it and replies.
 |-------|----------|---------|-------------|
 | `name` | Yes | — | Bot identifier |
 | `description` | No | — | Bot description |
-| `defaultWorkingDirectory` | Yes | — | Working directory for Claude |
+| `defaultWorkingDirectory` | Yes | — | Working directory for Codex |
 | `wechatBotToken` | No | — | Pre-authenticated iLink token (optional) |
 | `ilinkBaseUrl` | No | `https://ilinkai.weixin.qq.com` | iLink API URL |
 | `maxTurns` | No | unlimited | Max conversation turns |
 | `maxBudgetUsd` | No | unlimited | Max cost per request |
-| `model` | No | SDK default | Claude model |
+| `model` | No | SDK default | Codex model |
 
 ## Environment Variable Mode
 
@@ -102,7 +102,7 @@ For a single WeChat bot, use env vars instead of `bots.json`:
 
 ```bash
 WECHAT_ILINK_ENABLED=true
-CLAUDE_DEFAULT_WORKING_DIRECTORY=/home/user/project
+CODEX_DEFAULT_WORKING_DIRECTORY=/home/user/project
 ```
 
 ## Message Support
